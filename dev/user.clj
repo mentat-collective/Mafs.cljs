@@ -2,6 +2,7 @@
   (:require [babashka.fs :as fs]
             [clojure.java.shell :refer [sh]]
             [clojure.string]
+            [hiccup.page :as hiccup]
             [nextjournal.clerk :as clerk]
             [nextjournal.clerk.config :as config]
             [nextjournal.clerk.view]
@@ -23,6 +24,25 @@
 (def ^{:doc "static site defaults for Clerk's Garden CDN."}
   garden-defaults
   {:cas-prefix "/mentat-collective/mafs.cljs/commit/$GIT_SHA/"})
+
+(defn rebind [^clojure.lang.Var v f]
+  (let [old (.getRawRoot v)]
+    (.bindRoot v (f old))))
+
+;; my attempt at injecting the CSS for my viewers...
+(defonce _ignore
+  (rebind
+   #'nextjournal.clerk.view/include-viewer-css
+   (fn [old]
+     (fn [& xs]
+       (concat
+        (list
+         (hiccup/include-css "https://unpkg.com/computer-modern@0.1.2/cmu-serif.css")
+         (hiccup/include-css "https://unpkg.com/mafs@0.11.4/core.css")
+
+         ;; TODO we should be able to replace this.
+         (hiccup/include-css "https://unpkg.com/mafs@0.11.4/font.css"))
+        (apply old xs))))))
 
 (defn start!
   "Runs [[clerk/serve!]] with our custom JS. Run this after generating custom JS

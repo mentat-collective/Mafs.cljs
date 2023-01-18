@@ -1,0 +1,4 @@
+{:hooks
+ {:analyze-call
+  {mafs.macros/defcomponent
+   hooks.mafs.macros/defcomponent}}}

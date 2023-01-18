@@ -42,7 +42,8 @@
                   :scm {:tag (str "v" version)}
                   :basis basis
                   :src-pom "template/pom.xml"
-                  :src-dirs ["src"]})
+                  :src-dirs ["src"]
+                  :resource-dirs ["resources"]})
     (doseq [f ["README.md" "LICENSE" "deps.edn"]]
       (b/copy-file {:src f :target (format "%s/%s" class-dir f)}))
     (b/copy-dir {:src-dirs ["src"]
