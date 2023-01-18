@@ -1,24 +1,14 @@
 (ns mafs
-  "Reagent components and utilities exposing
-  the [hooks](https://reactjs.org/docs/hooks-intro.html) declared by
-  the [Leva](https://github.com/pmndrs/leva) components GUI.
-
-  These components make it easy to synchronize state through Clojure's atom
-  interface instead of
-  [React hooks](https://reactjs.org/docs/hooks-intro.html) and callbacks."
   (:require ["mafs" :as m]
             [mafs.macros :refer [defcomponent]]
             [reagent.core :as reagent]))
+
+;; ## Helpers
 
 (def Theme
   (js->clj m/Theme :keywordize-keys true))
 
 (def labelPi m/labelPi)
-
-(defn mag
-  "TODO expose better versions of these."
-  [p]
-  (.mag m/vec (clj->js p)))
 
 ;; ## Components
 
@@ -136,9 +126,8 @@
       {:constrain s}))))
 
 (defn ^:no-doc constrain->fn [constrain initial]
-  (cond (or (fn? constrain)
-            (nil? constrain))
-        constrain
+  (cond (nil? constrain) nil
+        (fn? constrain) (comp clj->js constrain)
 
         (or (keyword? constrain)
             (string? constrain))
@@ -149,52 +138,62 @@
          (ex-info "Invalid constraint!"
                   {:constrain constrain}))))
 
-(defn path->get [path]
+(defn ^:no-doc path->get [path]
   (cond (nil? path)    deref
         (vector? path) #(get-in (deref %) path)
         :else          #(get (deref %) path)))
 
-(defn path->set [path]
+(defn ^:no-doc path->set [path]
   (cond (nil? path)    reset!
         (vector? path) #(swap! %1 assoc-in path %2)
         :else          #(swap! %1 assoc path %2)))
 
-;; TODO consolidate these two!
-
-(defn MovablePointAtom
+(defn MovablePoint
   "This version takes an atom and, optionally, a path into the atom.
   - `:atom`
   - `:path` optional
   - `:constrain`
-  - `:color`"
-  [{!state :atom :keys [path constrain] :as opts}]
-  (let [get       (path->get path)
-        set       (path->set path)
-        initial   (get !state)
-        constrain (constrain->fn constrain initial)
-        ;; TODO report if constrain is nil, error!
+  - `:color`
 
-        opts (if constrain
-               (assoc opts :constrain constrain)
-               (dissoc opts :constrain))]
-    (fn [{!state :atom on-change :on-change}]
-      [:> m/MovablePoint
-       (assoc opts
-              :point (get !state)
-              :on-move
-              (fn [new-point]
-                (let [xy [(aget new-point 0) (aget new-point 1)]]
-                  (set !state xy)
-                  (when on-change
-                    (on-change xy)))))])))
-
-(defn MovablePoint
-  "This version takes an initial point and an `:on-move`.
+  also discuss
 
   - `:point`
-  - `:on-move`
-  - `:constrain`
-  - `:color`"
-  [{:keys [point] :as opts}]
-  (reagent/with-let [!state (reagent/atom point)]
-    [MovablePointAtom (assoc opts :atom !state)]))
+  - `:on-move`"
+  [{!state :atom :keys [point path constrain on-move] :as opts}]
+  (when (and !state point)
+    (js/console.warn
+     (str "`:point` " point " will be ignored in favor of the entry in the
+     supplied `:atom`.")))
+
+  (when (not !state)
+    (when (not point)
+      (js/console.warn
+       (str "`:atom` and `:point` are both missing! Please supply one or the
+     other to initialize the point's position. Using default of `[0 0]`.")))
+
+    (when (not on-move)
+      (js/console.warn
+       (str "`:atom` and `:on-move` are both missing! Please supply one or the
+     other to capture state changes."))))
+
+  (let [get       (path->get path)
+        set       (path->set path)
+        initial   (if !state
+                    (get !state)
+                    (or point [0 0]))
+        constrain (constrain->fn constrain initial)
+        ;; TODO report if constrain is nil, error!
+        opts (if constrain
+               (assoc opts  :constrain constrain)
+               (dissoc opts :constrain))]
+    (fn [{!state :atom on-move :on-move}]
+      (reagent/with-let [!state (or !state (reagent/atom initial))]
+        [:> m/MovablePoint
+         (assoc opts
+                :point (get !state)
+                :on-move
+                (fn [new-point]
+                  (let [xy [(aget new-point 0) (aget new-point 1)]]
+                    (set !state xy)
+                    (when on-move
+                      (on-move xy)))))]))))

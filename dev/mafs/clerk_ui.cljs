@@ -3,6 +3,7 @@
             [mafs.debug]
             [mafs.line]
             [mafs.plot]
+            [mafs.vec]
             [nextjournal.clerk.sci-env]
             [sci.ctx-store]
             [sci.core :as sci]))
@@ -24,4 +25,7 @@
    (sci/copy-ns mafs.line (sci/create-ns 'mafs.line))
 
    'mafs.debug
-   (sci/copy-ns mafs.debug (sci/create-ns 'mafs.debug))}})
+   (sci/copy-ns mafs.debug (sci/create-ns 'mafs.debug))
+
+   'mafs.vec
+   (sci/copy-ns mafs.vec (sci/create-ns 'mafs.vec))}})

@@ -42,12 +42,12 @@
   "
   (.-Parametric m/Plot))
 
-#_(defcomponent VectorField
-    "
+(defcomponent VectorField
+  "
   - `:xy`
   - `:xy-opacity`
   - `:step`
   - `:opacity-step`
   - `:color`
   - `:style`"
-    (.-VectorField m/Plot))
+  (.-VectorField m/Plot))
