@@ -3,6 +3,9 @@
             [mafs.macros :refer [defcomponent]]
             [reagent.core :as reagent]))
 
+;; TODO process the function argument return values to return js arrays vs
+;; vectors.
+
 ;; ## Helpers
 
 (def Theme
