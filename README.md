@@ -37,39 +37,15 @@ Or grab the most recent code using a Git dependency:
   {:git/sha "$GIT_SHA"}}
 ```
 
-Require `mafs.core` in your namespace:
+Require `mafs` in your namespace:
 
 ```clj
 (ns my-app
-  (:require [mafs.core :as mafs]
+  (:require [mafs :as mafs]
             [reagent.core :as reagent]))
 ```
 
-Declare some state that you'd like to control with a GUI. Each entry's key
-becomes its label, and Mafs infers the correct input from the value's type.
-
-```clj
-(defonce !synced
-  (reagent/atom
-   {:number 10
-    :color {:r 10 :g 12 :b 4}
-    :string "Hi!"
-    :point {:x 1 :y 1}}))
-```
-
-Pass the atom to the `mafs/Controls` component via the `:atom` key to add its
-entries to the Mafs panel hovering on the right, and bidirectionally bind its
-state to the interactive state in the panel:
-
-```clj
-[mafs/Controls
- {:folder {:name "Quickstart"}
-  :atom !synced}]
-```
-
-<p align="center">
-  <img width="500" alt="image" src="https://user-images.githubusercontent.com/69635/211684473-cb933085-4a33-41c6-aeab-d95051257501.gif">
-</p>
+TODO more!
 
 See the project's [interactive documentation notebook](https://mafs.mentat.org)
 for more guides and examples.

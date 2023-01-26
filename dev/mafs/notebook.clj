@@ -45,7 +45,7 @@
 ^{:nextjournal.clerk/width :wide}
 (show-sci
  [mafs/Mafs
-  [mafs/CartesianCoordinates]])
+  [mafs.coordinates/Cartesian]])
 
 ;; `CartesianCoordinates` is pretty customizable. Let's make our graph a little
 ;; bit more sophisticated-looking by adding some subdivisions.
@@ -53,7 +53,7 @@
 ^{:nextjournal.clerk/width :wide}
 (show-sci
  [mafs/Mafs
-  [mafs/CartesianCoordinates {:subdivisions 4}]])
+  [mafs.coordinates/Cartesian {:subdivisions 4}]])
 
 ;; ### Plotting a function
 
@@ -63,7 +63,7 @@
 ^{:nextjournal.clerk/width :wide}
 (show-sci
  [mafs/Mafs
-  [mafs/CartesianCoordinates {:subdivisions 4}]
+  [mafs.coordinates/Cartesian {:subdivisions 4}]
   [mafs.plot/OfX {:y (fn [x] (Math/sin x))}]])
 
 ;; We've passed a plain ClojureScript function, and Mafs evaluated it and
@@ -83,7 +83,7 @@
  [mafs/Mafs
   {:view-box {:x [-10 10] :y [-2 2]}
    :preserve-aspect-ratio false}
-  [mafs/CartesianCoordinates
+  [mafs.coordinates/Cartesian
    {:subdivisions 4
     :x-axis
     {:lines Math/PI
@@ -107,7 +107,7 @@
     [mafs/Mafs
      {:view-box {:x [-10 10] :y [-2 2]}
       :preserve-aspect-ratio false}
-     [mafs/CartesianCoordinates
+     [mafs.coordinates/Cartesian
       {:subdivisions 4
        :x-axis
        {:lines Math/PI
@@ -156,7 +156,7 @@
  [mafs/Mafs
   {:view-box {:x [-5 5]
               :y [-5 5]}}
-  [mafs/CartesianCoordinates]
+  [mafs.coordinates/Cartesian]
   [mafs/Polygon {:points [[-5 -5] [5 -5] [5 5] [-5 5]]}]])
 
 ;; #### Aspect ratio preservation
@@ -171,7 +171,7 @@
   {:view-box {:x [-5 5]
               :y [-5 5]}
    :preserve-aspect-ratio false}
-  [mafs/CartesianCoordinates]
+  [mafs.coordinates/Cartesian]
   [mafs/Polygon {:points [[-5 -5] [5 -5] [5 5] [-5 5]]}]])
 
 ;; The only other option is "contain" for now, which is also the default.
@@ -187,7 +187,7 @@
   {:view-box {:x [-5 5]
               :y [-5 5]
               :padding 0}}
-  [mafs/CartesianCoordinates]
+  [mafs.coordinates/Cartesian]
   [mafs/Polygon {:points [[-5 -5] [5 -5] [5 5] [-5 5]]}]])
 
 ;; ### Coordinates
@@ -196,12 +196,14 @@
 ;; of scale. Axes are pretty configurable—the spacing between lines, number of
 ;; subdivisions, and the labels themselves can be altered.
 
+;; #### Cartesian Coordinates
+
 ^{:nextjournal.clerk/width :wide}
 (show-sci
  [mafs/Mafs
-  [mafs/CartesianCoordinates]])
+  [mafs.coordinates/Cartesian]])
 
-;; #### Axis options
+;; ##### Axis options
 
 ;; Each axis—xAxis and yAxis—can be configured with the following options:
 
@@ -211,7 +213,7 @@
 ;; - subdivisions: How many subdivisions to draw per line, or false to draw none.
 ;; - labels: A function that returns a label for each line.
 
-;; The entire axis can also be set to falseto disable it entirely.
+;; The entire axis can also be set to false to disable it entirely.
 
 ;; Mafs also exports a helper function, labelPi, which can be passed to labels
 ;; to render in terms of $\pi$.
@@ -224,7 +226,7 @@
                   (* 2 Math/PI)]
               :padding (/ Math/PI 2)}
    :preserve-aspect-ratio false}
-  [mafs/CartesianCoordinates
+  [mafs.coordinates/Cartesian
    {:x-axis
     {:lines 1
      :labels
@@ -235,6 +237,15 @@
      :subdivisions 4
      :labels mafs/labelPi}}]])
 
+;; #### Polar Coordinates
+
+^{:nextjournal.clerk/width :wide}
+(show-sci
+ [mafs/Mafs
+  [mafs.coordinates/Polar
+   {:subdivisions 5
+    :lines 2}]])
+
 ;; ### Point
 
 ;; Points are dots that can be rendered at a location (x, y).
@@ -242,7 +253,7 @@
 ^{:nextjournal.clerk/width :wide}
 (show-sci
  [mafs/Mafs
-  [mafs/CartesianCoordinates]
+  [mafs.coordinates/Cartesian]
   [mafs/Point {:x 1 :y 1}]])
 
 ;; ### Line
@@ -259,7 +270,7 @@
             {:point1 [-1 -1]
              :point2 [2 1]})]
    [mafs/Mafs
-    [mafs/CartesianCoordinates]
+    [mafs.coordinates/Cartesian]
     [mafs.line/Segment @!state]
     [mafs/MovablePoint
      {:atom !state
@@ -277,7 +288,7 @@
             {:point1 [-1 -1]
              :point2 [2 1]})]
    [mafs/Mafs
-    [mafs/CartesianCoordinates]
+    [mafs.coordinates/Cartesian]
     [mafs.line/ThroughPoints @!state]
     [mafs/MovablePoint
      {:atom !state
@@ -295,7 +306,7 @@
             {:point [-1 -1]
              :slope [0 1]})]
    [mafs/Mafs
-    [mafs/CartesianCoordinates]
+    [mafs.coordinates/Cartesian]
     [mafs.line/PointSlope
      {:point (:point @!state)
       :slope (-> (:slope @!state)
@@ -315,7 +326,7 @@
  (reagent/with-let
    [!state (reagent/atom [-1 -1])]
    [mafs/Mafs {:view-box {:y [-1 1]}}
-    [mafs/CartesianCoordinates]
+    [mafs.coordinates/Cartesian]
     [mafs.line/PointAngle
      {:point @!state
       :angle (/ Math/PI 6)}]
@@ -330,7 +341,7 @@
     b  [-2 0]
     !c (reagent/atom [0 2])]
    [mafs/Mafs
-    [mafs/CartesianCoordinates]
+    [mafs.coordinates/Cartesian]
     [mafs/Polygon
      {:points (let [[cx cy] @!c]
                 [[cx (- cy)] a b])
@@ -352,7 +363,7 @@
      [(/ (Math/sqrt 2) 2)
       (/ (Math/sqrt 2) 2)])]
    [mafs/Mafs {:view-box {:y [-2 2]}}
-    [mafs/CartesianCoordinates]
+    [mafs.coordinates/Cartesian]
     [mafs/Circle
      {:center [0 0]
       :radius (mafs.vec/mag @!point-on-circle)}]
@@ -375,7 +386,7 @@
       :height [0 1]})]
    [mafs/Mafs {:view-box {:x [-3 3]
                           :y [-3 3]}}
-    [mafs/CartesianCoordinates]
+    [mafs.coordinates/Cartesian]
     [mafs/Transform {:translate (:translate @!state)}
      [mafs/Transform {:rotate
                       (let [[x y] (:rotate @!state)]
@@ -422,7 +433,7 @@
    (dec (/ 2 (inc (Math/exp (- x))))))
 
  [mafs/Mafs
-  [mafs/CartesianCoordinates]
+  [mafs.coordinates/Cartesian]
   [mafs.plot/OfX {:y Math/sin :color (:blue mafs/Theme)}]
   [mafs.plot/OfY {:x sigmoid1 :color (:pink mafs/Theme)}]])
 
@@ -439,7 +450,7 @@
  (reagent/with-let
    [!point (reagent/atom [0.5 0])]
    [mafs/Mafs {:view-box {:x [-1 1] :y [-1 1]}}
-    [mafs/CartesianCoordinates {:subdivisions 4}]
+    [mafs.coordinates/Cartesian {:subdivisions 4}]
     [mafs.plot/Parametric
      (let [k (* 25 (first @!point) Math/PI)]
        {:t [0 k]
@@ -458,7 +469,7 @@
  (reagent/with-let
    [!point (reagent/atom [0.6 0.6])]
    [mafs/Mafs
-    [mafs/CartesianCoordinates {:subdivisions 2}]
+    [mafs.coordinates/Cartesian {:subdivisions 2}]
     [mafs.plot/VectorField
      {:step 0.5
       :xy
@@ -505,7 +516,7 @@
                           :y [-3.5 3.5]
                           :padding 0}
                :preserve-aspect-ratio false}
-    [mafs/CartesianCoordinates]
+    [mafs.coordinates/Cartesian]
     [mafs.plot/OfX {:y (fn [x] (+ (f x) 1.5))}]
     [mafs.plot/OfX {:y (fn [x] (- (f x) 1.5))
                     :min-sampling-depth 15}]]))
@@ -525,7 +536,7 @@
 (show-sci
  (reagent/with-let [!point (reagent/atom [0.6 0.6])]
    [mafs/Mafs {:view-box {:y [0 2] :x [-3 5]}}
-    [mafs/CartesianCoordinates]
+    [mafs.coordinates/Cartesian]
     (let [[x y] @!point
           desc  (str "(" (.toFixed x 3)  ", " (.toFixed y 3) ")")
           opts  {:x x :y y :attach-distance 15}]
@@ -551,7 +562,7 @@
          vec2  (mafs.vec/add vec1 (mafs.vec/rotate vec1 angle))
          vec3  (mafs.vec/add vec1 (mafs.vec/rotate vec2 (* -2 angle)))]
      [mafs/Mafs
-      [mafs/CartesianCoordinates]
+      [mafs.coordinates/Cartesian]
       [mafs/Vector {:tip vec1}]
       [mafs/Vector {:tail vec1 :tip vec2}]
       [mafs/Vector {:tail vec2 :tip vec3}]
