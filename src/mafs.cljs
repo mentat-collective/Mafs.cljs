@@ -1,10 +1,8 @@
 (ns mafs
+  "Main components and helper functions for mafs."
   (:require ["mafs" :as m]
             [mafs.macros :refer [defcomponent]]
             [reagent.core :as reagent]))
-
-;; TODO process the function argument return values to return js arrays vs
-;; vectors.
 
 ;; ## Helpers
 
@@ -27,8 +25,6 @@
   - `:ssr`
   "
   m/Mafs)
-
-
 
 (defcomponent Point
   "
@@ -175,14 +171,12 @@
       (js/console.warn
        (str "`:atom` and `:on-move` are both missing! Please supply one or the
      other to capture state changes."))))
-
   (let [get       (path->get path)
         set       (path->set path)
         initial   (if !state
                     (get !state)
                     (or point [0 0]))
         constrain (constrain->fn constrain initial)
-        ;; TODO report if constrain is nil, error!
         opts (if constrain
                (assoc opts  :constrain constrain)
                (dissoc opts :constrain))]

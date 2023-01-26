@@ -1,4 +1,4 @@
-# mafs.cljs
+# Mafs.cljs
 
 A [Reagent][reagent-url] interface to the [Mafs][mafs-url] interactive 2d
 math visualization library.
