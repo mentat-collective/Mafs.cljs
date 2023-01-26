@@ -6,4 +6,4 @@
  {reagent.core/with-let clojure.core/let}
 
  :config-paths
- ["../resources/clj-kondo.exports/mentat-collective/mafs.cljs"]}
+ ["../resources/clj-kondo.exports/org.mentat/mafs.cljs"]}
