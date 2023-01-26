@@ -1,4 +1,5 @@
 (ns mafs
+  "Main components and helper functions for mafs."
   (:require ["mafs" :as m]
             [mafs.macros :refer [defcomponent]]
             [reagent.core :as reagent]))
@@ -12,6 +13,8 @@
   (js->clj m/Theme :keywordize-keys true))
 
 (def labelPi m/labelPi)
+(def useTransformContext m/useTransformContext)
+(def useStopwatch m/useStopwatch)
 
 ;; ## Components
 
@@ -25,13 +28,6 @@
   - `:ssr`
   "
   m/Mafs)
-
-(defcomponent CartesianCoordinates
-  "
-  - `:x-axis`
-  - `:y-axis`
-  - `:subdivisions`"
-  m/CartesianCoordinates)
 
 (defcomponent Point
   "
@@ -178,14 +174,12 @@
       (js/console.warn
        (str "`:atom` and `:on-move` are both missing! Please supply one or the
      other to capture state changes."))))
-
   (let [get       (path->get path)
         set       (path->set path)
         initial   (if !state
                     (get !state)
                     (or point [0 0]))
         constrain (constrain->fn constrain initial)
-        ;; TODO report if constrain is nil, error!
         opts (if constrain
                (assoc opts  :constrain constrain)
                (dissoc opts :constrain))]
