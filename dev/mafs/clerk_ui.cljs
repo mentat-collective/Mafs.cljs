@@ -19,7 +19,7 @@
    (sci/copy-ns mafs (sci/create-ns 'mafs))
 
    'mafs.coordinates
-   (sci/copy-ns mafs.line (sci/create-ns 'mafs.coordinates))
+   (sci/copy-ns mafs.coordinates (sci/create-ns 'mafs.coordinates))
 
    'mafs.plot
    (sci/copy-ns mafs.plot (sci/create-ns 'mafs.plot))

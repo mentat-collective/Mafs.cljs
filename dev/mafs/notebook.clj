@@ -9,7 +9,7 @@
 ;; # Mafs.cljs
 ;;
 ;; A [Reagent](https://reagent-project.github.io/) interface to
-;; the [Mafs](https://jsxgraph.org/) interactive math visualization library.
+;; the [Mafs](https://mafs.dev/) interactive 2d math visualization library.
 
 ;; [![Build Status](https://github.com/mentat-collective/mafs.cljs/actions/workflows/kondo.yml/badge.svg?branch=main)](https://github.com/mentat-collective/mafs.cljs/actions/workflows/kondo.yml)
 ;; [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/mentat-collective/mafs.cljs/blob/main/LICENSE)
@@ -29,6 +29,76 @@
 ;; > page](https://cljdoc.org/d/org.mentat/mafs.cljs/CURRENT/doc/readme) for
 ;; > detailed API documentation.
 
+;; ## What is Mafs?
+;;
+;; [Mafs](https://mafs.dev) is a JavaScript library for building declarative,
+;; interactive 2d mathematical scenes.
+
+;; For example, here is an example of an interactive scene representing
+;; a [vector field](https://en.wikipedia.org/wiki/Vector_field). Parameters of
+;; the vector field are tuned by dragging around a highlighted movable point in
+;; the scene:
+
+;; > The 'show code' link below will expand the example's source.
+
+^{:nextjournal.clerk/visibility {:code :fold}}
+(show-sci
+ (reagent/with-let
+   [!point (reagent/atom [0.6 0.6])]
+   [mafs/Mafs {:height 300}
+    [mafs.coordinates/Cartesian {:subdivisions 2}]
+    [mafs.plot/VectorField
+     {:step 0.5
+      :xy
+      (let [[ax ay] @!point]
+        (fn [[x y]]
+          (js/Array.
+           (- (- y ay) (- x ax))
+           (- (- (- x ax)) (- y ay)))))
+      :xy-opacity
+      (fn [[x y]]
+        (/ (+ (Math/abs x) (Math/abs y))
+           10))}]
+    [mafs/MovablePoint
+     {:atom !point}]]))
+
+;; [Mafs.cljs](https://github.com/mentat-collective/mathbox.cljs) extends Mafs
+;; with set of [Reagent](https://reagent-project.github.io/) components that
+;; make it easy to define Mafs constructions inside of a user interface built
+;; with ClojureScript.
+
+;; ## Quickstart
+;;
+;; Install `Mafs.cljs` into your ClojureScript project using the instructions
+;; at its Clojars page:
+
+;; [![Clojars
+;;    Project](https://img.shields.io/clojars/v/org.mentat/mafs.cljs.svg)](https://clojars.org/org.mentat/mafs.cljs)
+;;
+;; Or grab the most recent code using a Git dependency:
+;;
+;; ```clj
+;; ;; deps
+;; {io.github.mentat-collective/mafs.cljs
+;;   {:git/sha "$GIT_SHA"}}
+;; ```
+
+;; Require `mafs` and any of the component namespaces that you'd like to use in
+;; your ClojureScript namespace:
+
+;; ```clj
+;; (ns my-app
+;;   (:require [mafs]
+;;             [mafs.coordinates]
+;;             [mafs.plot]
+;;             [mafs.line]
+;;             [mafs.debug]
+;;             [mafs.vec]
+;;             [reagent.core :as reagent]))
+;; ```
+;;
+;; The next section walks you through construction of your first Mafs scene.
+
 ;; ## Hello f(x)
 
 ;; Documentation often starts with "Hello, world". For this library, the
@@ -36,7 +106,6 @@
 ;; it a little bit interactive.
 
 ;; ### Drawing a coordinate plane
-
 
 ;; Mafs only needs a few components to set up a working coordinate plane view.
 ;; We'll start with the same setup we had in “Installation” — just a Cartesian
@@ -47,8 +116,8 @@
  [mafs/Mafs
   [mafs.coordinates/Cartesian]])
 
-;; `CartesianCoordinates` is pretty customizable. Let's make our graph a little
-;; bit more sophisticated-looking by adding some subdivisions.
+;; `Cartesian` is pretty customizable. Let's make our graph a little bit more
+;; sophisticated-looking by adding some subdivisions.
 
 ^{:nextjournal.clerk/width :wide}
 (show-sci
@@ -72,7 +141,7 @@
 ;; This looks a little weird though: sine waves are periodic in $\pi$, so it'd
 ;; be nice to reflect that in our coordinate plane. Let's do the following:
 
-;; - Tell the x-axis to draw a line at every multiple of π
+;; - Tell the x-axis to draw a line at every multiple of $\pi$
 ;; - Label the x-axis in terms of $\pi$
 ;; - Zoom the x-axis out a bit
 ;; - Zoom the y-axis in a bit
@@ -91,8 +160,10 @@
   [mafs.plot/OfX {:y (fn [x] (Math/sin x))}]])
 
 ;; At this point, it's worth noting that you haven't _instructed_ the library to
-;; do anything—you've just declared what you want on the screen. This model of
-;; programming is core to React, and also core to this library.
+;; do anything — you've just declared what you want on the screen. This model of
+;; programming is core to [React](https://reactjs.org/)
+;; and [Reagent](https://reagent-project.github.io/), and also core to this
+;; library.
 
 ;; ### Making things interactive
 
@@ -112,27 +183,39 @@
        :x-axis
        {:lines Math/PI
         :labels mafs/labelPi}}]
-     [mafs.plot/OfX {:y (fn [x] (Math/sin (- x (first @!phase))))}]
+     [mafs.plot/OfX
+      {:y (fn [x]
+            (let [shift (first @!phase)]
+              (Math/sin (- x shift))))}]
      [mafs/MovablePoint
       {:atom !phase
        :constrain "horizontal"}]]
     [:pre
      (str "Phase shift: " (first @!phase))]]))
 
-;; There are a few noteworthy things here: one is how we declared our point. We
-;; start centered on the origin, but constrain the motion of the point
-;; horizontally.
+;; There are a few noteworthy things here: one is how we declared our
+;; `mafs/MovablePoint`. We start centered on the origin by setting the initial
+;; value of `!phase` to `[0 0]`, then constrain the motion of the point
+;; horizontally by passing `:constrain "horizontal"`. Adding the point after the
+;; plot and grid makes sure that the point is rendered on top of everything else
+;; in the scene.
 
-;; Also worth noting is how we subtracted `phase.x` from the `x` in our sine
-;; function. This is just math—we're moving our wave side-to-side based on the
-;; point's position.
+;; Also worth noting is how we subtracted `(first @!phase)` from the `x` in our
+;; sine function. This is just math — we're moving our wave side-to-side based
+;; on the point's position.
 
-;; Lastly, we draw `{phase.element}` on the view, which renders the actual
-;; point. We place it last so that it gets rendered above our function.
+;; ### Up Next
+
+;; The remainder of these guides are more specific: they cover components you
+;; can add to your visualization. The rest is up to you and your imagination.
+;; The examples on this site might provide some inspiration, though.
 
 ;; ## Components
 
 ;; ### Mafs
+
+;; This component is the entrypoint into rendering visualizations. It must wrap
+;; all other Mafs components. On its own, it renders a blank canvas.
 
 ^{:nextjournal.clerk/width :wide}
 (show-sci
@@ -141,15 +224,46 @@
 
 ;; #### Sizing
 
-;; Mafs accepts a width and height prop. width defaults to auto, which means
-;; that Mafs will scale to the width of its container. height defaults to 500px,
-;; and cannot be set to "auto".
+;; Mafs accepts a `:width` and `:height` prop. `:width` defaults to `"auto"`,
+;; which means that Mafs will scale to the width of its container. `:height`
+;; defaults to `"500px"` and cannot be set to "auto".
+
+;; #### Zooming and panning
+
+;; Mafs can be zoomed and panned by end users using a variety of input methods.
+;; Zooming and panning can be enabled, disabled, and configured via the `:zoom`
+;; and `:pan` props.
+
+;; - The mouse wheel zooms the viewport.
+;; - Pressing and dragging pans the viewport.
+;; - The "pinch" gesture zooms and pans the viewport simultaneously.
+;; - The arrow, -, and + keys pan and zoom the viewport, with the `option`,
+;;   `meta` and `shift` keys adjusting the speed.
+
+;; Panning is enabled by default, but zooming is opt-in. The default zoom limits
+;; are `{:min 0.5 :max 0.5}`.
+
+^{:nextjournal.clerk/width :wide}
+(show-sci
+ [mafs/Mafs
+  {:zoom {:min 0.1 :max 2}
+   :view-box {:x [-0.25 0.25]
+              :y [-0.25 0.25]
+              :padding 0}}
+  [mafs.coordinates/Cartesian
+   {:subdivisions 5}]
+  [mafs/Circle {:center [0 0]
+                :radius 1}]
+  [mafs/Text {:x 1.1
+              :y 0.1
+              :attach "ne"}
+   "Oh hi!"]])
 
 ;; #### Viewbox
 
 ;; When showing a visualization, it's useful to think of your content as having
 ;; a useful "viewbox" designating the region in which interesting things are
-;; happening. Mafs allows you to specify this with the viewBox prop.
+;; happening. Mafs allows you to specify this with the `:view-box` prop.
 
 ^{:nextjournal.clerk/width :wide}
 (show-sci
@@ -161,9 +275,9 @@
 
 ;; #### Aspect ratio preservation
 
-;; The preserveAspectRatio prop changes how the viewbox is mapped to the Mafs
-;; viewport. Setting it to false will stretch the viewbox to fit the viewport,
-;; tossing aside the aspect ratio preservation.
+;; The `:preserve-aspect-ratio` prop changes how the viewbox is mapped to the
+;; Mafs viewport. Setting it to false will stretch the viewbox to fit the
+;; viewport, tossing aside the aspect ratio preservation.
 
 ^{:nextjournal.clerk/width :wide}
 (show-sci
@@ -174,12 +288,13 @@
   [mafs.coordinates/Cartesian]
   [mafs/Polygon {:points [[-5 -5] [5 -5] [5 5] [-5 5]]}]])
 
-;; The only other option is "contain" for now, which is also the default.
+;; The only other supported value is `"contain"` for now, which is also the
+;; default.
 
 ;; #### Padding
 
-;; Mafs adds a padding of 0.5 to all visualizations by default. To change or
-;; remove padding, you can specify padding in the viewBox object.
+;; Mafs adds a `:padding` of `0.5` to all visualizations by default. To change
+;; or remove padding, you can specify `:padding` in the `:view-box` value.
 
 ^{:nextjournal.clerk/width :wide}
 (show-sci
@@ -193,7 +308,7 @@
 ;; ### Coordinates
 
 ;; Coordinates overlay a grid of lines on top of the Mafs canvas to give a sense
-;; of scale. Axes are pretty configurable—the spacing between lines, number of
+;; of scale. Axes are pretty configurable — the spacing between lines, number of
 ;; subdivisions, and the labels themselves can be altered.
 
 ;; #### Cartesian Coordinates
@@ -205,18 +320,19 @@
 
 ;; ##### Axis options
 
-;; Each axis—xAxis and yAxis—can be configured with the following options:
+;; Each axis — `:x-axis` and `:y-axis` - can be configured with the following
+;; options:
 
-;; - axis: Whether to draw the axis line.
-;; - lines: The spacing between each primary line orthogonal to the axis, or
-;;   false to draw none.
-;; - subdivisions: How many subdivisions to draw per line, or false to draw none.
-;; - labels: A function that returns a label for each line.
+;; - `:axis`: Whether to draw the axis line.
+;; - `:lines`: The spacing between each primary line orthogonal to the axis, or
+;;   `false` to draw none.
+;; - `:subdivisions`: How many subdivisions to draw per line, or `false` to draw none.
+;; - `:labels`: A function that returns a label for each line.
 
-;; The entire axis can also be set to false to disable it entirely.
+;; The entire axis can also be set to `false` to disable it entirely.
 
-;; Mafs also exports a helper function, labelPi, which can be passed to labels
-;; to render in terms of $\pi$.
+;; Mafs also exports a helper function, `mafs/labelPi` which can be passed to
+;; `:labels` to render in terms of $\pi$.
 
 ^{:nextjournal.clerk/width :wide}
 (show-sci
@@ -246,9 +362,15 @@
    {:subdivisions 5
     :lines 2}]])
 
+;; ##### Axis options
+
+;; Polar coordinates take most of the same options as cartesian coordinates,
+;; except that `:lines` and `:subdivisions` affects the radial rather than the
+;; `x` and `y` axes.
+
 ;; ### Point
 
-;; Points are dots that can be rendered at a location (x, y).
+;; Points are dots that can be rendered at a location `(x, y)`.
 
 ^{:nextjournal.clerk/width :wide}
 (show-sci
@@ -333,6 +455,8 @@
     [mafs/MovablePoint {:atom !state}]]))
 
 ;; ### Polygon
+
+;; Polygons take a number of points and create a closed shape.
 
 ^{:nextjournal.clerk/width :wide}
 (show-sci
@@ -423,7 +547,7 @@
 ;; ### Plot
 
 ;; Mafs supports numerically plotting a number of function types by passing in
-;; plain JavaScript functions.
+;; ClojureScript functions.
 
 ;; #### Functions of $x$ and $y$
 
@@ -464,6 +588,11 @@
 
 ;; #### Vector fields
 
+;; Vector fields take a function `:xy` that is passed a point `[x y]` and
+;; returns a vector (a 2d js Array) at that point. Vectors are then artificially
+;; scaled down (for legibility) and plotted on the coordinate plane. You must
+;; also pass a `:step` to indicate how dense the vector field is.
+
 ^{:nextjournal.clerk/width :wide}
 (show-sci
  (reagent/with-let
@@ -489,9 +618,9 @@
 
 ;; ##### Function sampling
 
-;; Plot.OfX, Plot.OfY, and Plot.Parametric use numerical methods for evaluating
-;; a function and attempting to plot it accurately. The approach works well for
-;; most functions, but it's far from perfect.
+;; `mafs.plot/OfX`, `mafs.plot/OfY`, and `mafs.plot/Parametric` use numerical
+;; methods for evaluating a function and attempting to plot it accurately. The
+;; approach works well for most functions, but it's far from perfect.
 
 ;; Mafs samples functions by by recursively subdividing the domain until an
 ;; estimated error threshold is met (or the recursion limit limit is reached).
@@ -499,15 +628,15 @@
 ;; ##### Sampling depth
 
 ;; To force more subdivisions (and therefore improve quality), the
-;; minSamplingDepth and maxSamplingDepth props can be tuned. Increasing
-;; minSamplingDepth can help when you want to ensure more subdivisions and
-;; improve accuracy, and lowering maxSamplingDepth can help improve performance.
-;; These two props should be tuned to meet your needs.
+;; `:min-sampling-depth` and `:max-sampling-depth` props can be tuned.
+;; Increasing `:min-sampling-depth` can help when you want to ensure more
+;; subdivisions and improve accuracy, and lowering `:max-sampling-depth` can
+;; help improve performance. These two props should be tuned to meet your needs.
 
-;; Here's an example of a common "stress test" function for plotters, sin(1/x).
-;; The top plot has the default sampling depths, while the bottom has
-;; minSamplingDepth increased to 15. Neither approach is perfect, but the bottom
-;; render is indistinguishable from a perfect plot.
+;; Here's an example of a common "stress test" function for plotters,
+;; `sin(1/x)`. The top plot has the default sampling depths, while the bottom
+;; has `:min-sampling-depth` increased to `15`, Neither approach is perfect, but
+;; the bottom render is indistinguishable from a perfect plot.
 
 ^{:nextjournal.clerk/width :wide}
 (show-sci
@@ -523,14 +652,16 @@
 
 ;; ##### Vector fields
 
-;; Vector field rendering quality can be tuned with the step prop. This declares
-;; the spacing between arrows, so lowering it will decrease performance.
+;; Vector field rendering quality can be tuned with the `:step` prop. This
+;; declares the spacing between arrows, so lowering it will decrease
+;; performance.
 
 ;; ### Text
 
-;; The Text component is a pretty lightweight wrapper around SVG's text, namely
-;; that the anchor point is mapped to coordinate space. The optional attach will
-;; orient the text along a cardinal direction ("n", "s", "nw", etc.)
+;; The `mafs/Text` component is a pretty lightweight wrapper around SVG's
+;; `text`, namely that the anchor point is mapped to coordinate space. The
+;; optional `:attach` will orient the text along a cardinal direction (`"n"`,
+;; `"s"`, `"nw"` etc.)
 
 ^{:nextjournal.clerk/width :wide}
 (show-sci
@@ -551,8 +682,8 @@
 ;; magnitude.
 
 ;; Mafs ships with a small selection of common linear algebra functions (for
-;; both vectors and matrices), exposing them as vec. Those utilities are used
-;; extensively here.
+;; both vectors and matrices), exposing them as `mafs.vec` and `mafs.matrix`.
+;; Those utilities are used extensively here.
 
 ^{:nextjournal.clerk/width :wide}
 (show-sci
@@ -571,42 +702,122 @@
 ;; ### Transform
 
 ;; Sometimes it can be useful to apply 2D transformations to one or more
-;; components collectively. This is where Transform comes in handy.
+;; components collectively. This is where `mafs/Transform` comes in handy.
 
-;; TODO example
+^{:nextjournal.clerk/width :wide}
+(show-sci
+ (defn HelloBox []
+   [:<>
+    [mafs/Polygon {:points [[0 0] [1 0] [1 1] [0 1]]}]
+    [mafs/Circle {:center [0.5 0.5] :radius 0.5}]
+    [mafs/Text {:x 0.5 :y 0.5}
+     "Hello world!"]])
+
+ (reagent/with-let
+   [!state
+    (reagent/atom {:translate [-4 -2]
+                   :rotate [1 0]
+                   :scale [8 4]})]
+   [mafs/Mafs {:view-box {:x [-8 8] :y [-3 3]}}
+    [mafs.coordinates/Cartesian]
+    [mafs/Transform {:translate (:translate @!state)}
+     [mafs/Transform {:rotate
+                      (let [[x y] (:rotate @!state)]
+                        (Math/atan2 y x))}
+      [mafs/Transform {:scale (:scale @!state)}
+       [HelloBox]]
+      [mafs/MovablePoint {:atom !state
+                          :path :scale
+                          :color (:blue mafs/Theme)}]]
+     [mafs/MovablePoint {:atom !state
+                         :path :rotate
+                         :color (:green mafs/Theme)
+                         :constrain mafs.vec/normalize}]]
+    [mafs/MovablePoint {:atom !state
+                        :path :translate}]]))
 
 ;; #### Transformation Types
 
-;; Transform supports many transformation convenience props, but they all boil
-;; down to matrix multiplication.
+;; `mafs/Transform` supports many transformation convenience props, but they all
+;; boil down to matrix multiplication.
 
-;; You can pass your own matrix via the matrix prop and it will be combined with
-;; any other transformations you define. Use vec.matrixBuilder() to construct
-;; such a matrix if needed.
+;; You can pass your own matrix via the `:matrix` prop and it will be combined
+;; with any other transformations you define. Use `mafs.matrix/create` and the
+;; various `mafs.matrix` constructors to construct such a matrix if needed.
 
 ;; ##### Nesting
 
-(comment
-  [mafs/Transform {:translate [10 10]}
-   [mafs/Transform {:rotate (/ Math/PI 2)}
-    ;; components in here will be rotated, THEN translated
-    ]])
+;; Nesting is supported. Transformations will be applied _inside out_, so the
+;; innermost `mafs/Transform` will be applied first.
 
-;; Nesting is supported. Transformations will be applied inside out, so the
-;; innermost Transform will be applied first.
-
+;; ```clj
+;; [mafs/Transform {:translate [10 10]}
+;;  [mafs/Transform {:rotate (/ Math/PI 2)}
+;;   ;; components in here will be rotated, THEN translated
+;;   ]]
+;; ```
 ;; #### Exceptions
 
-;; Not all elements support Transform. This may change in the future.
+;; Not all elements support `mafs/Transform`. This may change in the future.
 
-;; - Text nodes have their anchor points transformed, but not the text itself.
-;; - CartesianCoordinates cannot be transformed.
-;; - Function.OfX cannot be transformed.
-;; - VectorField cannot be transformed.
+;; - Text nodes have their _anchor points_ transformed, but not the text itself.
+;; - Components in `mafs.coordinates` cannot be transformed.
+;; - `mafs.plot/OfX` cannot be transformed.
+;; - `mafs.plot/VectorField` cannot be transformed.
 
 ;; ### Debug
 
-;; TODO
+;; Mafs provides a few utilities for debugging or experimentation, underneath
+;; the `mafs.debug` namespace.
+
+;; #### Transform widget
+
+;; This is a little widget that allows you to test applying
+;; transforms (translation, rotation, and scale) to components by wrapping them
+;; in `mafs.debug/TransformWrapper`. It's mainly useful when building new custom
+;; components.
+
+^{:nextjournal.clerk/width :wide}
+(show-sci
+ (defn PizzaSlice []
+   (let [mask-id
+         (str "pizza-slice-mask-"
+              (-> (Math/random)
+                  (.toString 36)
+                  (.substr 2 9)))]
+     (fn []
+       [:g {:style
+            {:transform "var(--mafs-view-transform) var(--mafs-user-transform)"}}
+        [:defs {}
+         [:mask {:id mask-id}
+          [:polyline {:points "0,0 1,0.5 1,-0.5"
+                      :fill "white"}]]]
+        [:g {:mask (str "url(#" mask-id ")")}
+         [:circle {:cx 0 :cy 0 :r 1 :fill "brown"}]
+         [:circle {:cx 0 :cy 0 :r 0.85 :fill "yellow"}]
+         [:circle {:cx 0.4 :cy 0.1 :r 0.11 :fill "red"}]
+         [:circle {:cx 0.2 :cy -0.1 :r 0.09 :fill "red"}]
+         [:circle {:cx 0.5 :cy -0.15 :r 0.1 :fill "red"}]
+         [:circle {:cx 0.7 :cy 0.05 :r 0.11 :fill "red"}]
+         [:circle {:cx 0.65 :cy 0.35 :r 0.1 :fill "red"}]
+         [:circle {:cx 0.65 :cy -0.37 :r 0.08 :fill "red"}]]])))
+
+ [mafs/Mafs {:view-box {:x [-1 1] :y [-1 1]}}
+  [mafs.coordinates/Cartesian]
+  [mafs.debug/TransformWidget
+   [PizzaSlice]]])
+
+;; #### Viewport info
+
+;; This component displays Mafs' understanding of the world space that's in
+;; view, showing both the minimum and maximum `x` and `y` values, as well as
+;; what panes are visible according to the pane context.
+
+^{:nextjournal.clerk/width :wide}
+(show-sci
+ [mafs/Mafs {:view-box {:x [-1 1] :y [-1 1]}}
+  [mafs.coordinates/Cartesian]
+  [mafs.debug/ViewportInfo]])
 
 ;; ### Movable Points
 
@@ -617,56 +828,72 @@
 ;; or vertically, or constrained to an arbitrary function. This example
 ;; constrains movement horizontally:
 
-;; TODO
+^{:nextjournal.clerk/width :wide}
+(show-sci
+ (reagent/with-let
+   [n      10
+    f      (fn [x]
+             (Math/pow (/ x 2) 2))
+    !sep   (reagent/atom [1 0])
+    points (fn [sep-x]
+             (when-not (zero? sep-x)
+               (range (* (- n) sep-x)
+                      (* (+ n 0.5) sep-x)
+                      sep-x)))]
+   [:<>
+    [mafs/Mafs
+     {:view-box {:x [0 0] :y [-1.3 4.7]}}
+     [mafs.coordinates/Cartesian]
+     [mafs.plot/OfX
+      {:y f}]
+     (into [:<>]
+           (map-indexed
+            (fn [i x]
+              [mafs/Point {:key i :x x :y (f x)}])
+            (points (first @!sep))))
+     [mafs/MovablePoint
+      {:atom !sep
+       :constrain "horizontal"}]]
+    [:pre
+     (str "Separation: " (first @!sep))]]))
 
 ;; #### Constraints
 
 ;; Beyond constraining horizontally or vertically, points can also be
 ;; constrained to arbitrary paths. This is done by passing a function to
-;; constrain. The function is expected to take a point (x, y), which is where
-;; the user is trying to move to, and to return a new point, (x', y'), which is
-;; where the point should actually go.
+;; `:constrain`. The function is expected to take a point `[x y], which is where
+;; the user is trying to move to, and to return a new point, `[x' y']`, which is
+;; where the point should _actually_ go.
+;;
+;; > Note that for now you'll need to return a `js/Array` instead of a vector.
 
 ;; To demonstrate this, imagine constraining a point to "snap" to the nearest
 ;; whole number point. We take where the user is trying to move to, and round it
 ;; to the nearest whole number.
 
-;; TODO demo
+;; ```clj
+;; [mafs/MovablePoint
+;;  {:constrain (fn [[x y]]
+;;                (js/Array.
+;;                 (Math/round x)
+;;                 (Math/round y)))}]
+;; ```
 
 ;; Another common use case is to constrain motion to be circular —
 ;; `mafs.vec/with-mag` comes in handy there.
 
-;; TODO demo
+;; ```clj
+;; [mafs/MovablePoint
+;;  {:constrain (fn [point]
+;;                (clj->js
+;;                 (mafs.vec/with-mag point 1)))}]
+;; ```
 
 ;; You can also constrain a point to follow a straight line by setting constrain
-;; to "horizontal" or "vertical".
+;; to `"horizontal"` or `"vertical"`.
 
-;; Mafs may call constrain more than once when the user moves a point using the
-;; arrow keys, so it should be side-effect free.
-
-;; #### Transformations and constraints
-
-;; When wrapping a Movable Point in a Transform, the point will be transformed
-;; too. However, your constrain function will be passed the untransformed point,
-;; and its return value will be transformed back into the currently applied
-;; transform. In other words, Mafs takes care of the math for you.
-
-;; Let's see a more complex example where we combine more interesting constraint
-;; functions with transforms. On the left, we have a point that can only move in
-;; whole-number increments within a square, and on the right, a point that can
-;; only move in π/16 increments in a circle.
-
-;; TODO
-
-;; #### Dynamic Movable Points
-
-;; useMovablePoint is a hook that helps you instantiate and manage the state of
-;; a MovablePoint. However, if need be, you can also use MovablePoint directly.
-;; This can be useful if you need to work with a dynamic number of movable
-;; points (since the React "rules of hooks" ban you from dynamically calling
-;; hooks).
-
-;; TODO
+;; Mafs may call `:constrain` more than once when the user moves a point using
+;; the arrow keys, so it should be side-effect free.
 
 ;; ## Custom Components
 
@@ -675,23 +902,78 @@
 ;; elements you want. All it takes is some work to ensure things render
 ;; correctly.
 
-;; In learning this, we'll make a PizzaSlice component that behaves just like a
+;; In learning this, we'll make a `PizzaSlice` component that behaves just like a
 ;; built-in Mafs component.
 
 ;; ### Transform Contexts
 
-;; TODO finish.
+;; At its core, Mafs is just SVG with two contextual transforms. Those
+;; transforms correspond to two things:
 
-;; ## Animation
+;; - **The view transform**, which maps from world space to pixel space.
+;; - **The user transform**, which is imposed by the `mafs/Transform` component.
 
-;; TODO
+;; The general approach is that, to render a point `(x, y)`, you must first
+;; apply the user transform (because, well, the user is trying to move your
+;; component in some way), and then the view transform (so that it gets rendered
+;; by the SVG renderer in the right spot).
 
-;; ## Examples
+;; Mafs provides these transforms through two means:
 
-;; ### Bézier curves
-;; ### Riemann sums
-;; ### Fancy parabola
-;; ### Projectile motion
+
+;; - The `--mafs-view-transform` and `--mafs-user-transform` CSS custom
+;;   properties, which can be applied to an SVG element's style attribute.
+
+;; - The `mafs/useTransformContext` hook, which returns an object containing the
+;;   `viewTransform` matrix and the `userTransform` matrix.
+
+;; Components can mix and match these two approaches depending on needs. For
+;; example, the `mafs/Text` component transforms its anchor point in
+;; ClojureScript, and doesn't apply any CSS transforms, because that would
+;; distort the text itself. On the other hand, the `mafs/Ellipse` component
+;; almost entirely relies on CSS transforms internally.
+
+;; ### Accessing transforms in CSS
+
+;; Here's an example of a custom component that uses the CSS transforms approach
+;; to render a delicious little PizzaSlice. The slice is wrapped in a
+;; `mafs.debug/TransformWidget` component so that you can try applying some user
+;; transforms to it.
+
+^{:nextjournal.clerk/width :wide}
+(show-sci
+ (defn PizzaSlice []
+   (let [mask-id
+         (str "pizza-slice-mask-"
+              (-> (Math/random)
+                  (.toString 36)
+                  (.substr 2 9)))]
+     (fn []
+       [:g {:style
+            {:transform "var(--mafs-view-transform) var(--mafs-user-transform)"}}
+        [:defs {}
+         [:mask {:id mask-id}
+          [:polyline {:points "0,0 1,0.5 1,-0.5"
+                      :fill "white"}]]]
+        [:g {:mask (str "url(#" mask-id ")")}
+         [:circle {:cx 0 :cy 0 :r 1 :fill "brown"}]
+         [:circle {:cx 0 :cy 0 :r 0.85 :fill "yellow"}]
+         [:circle {:cx 0.4 :cy 0.1 :r 0.11 :fill "red"}]
+         [:circle {:cx 0.2 :cy -0.1 :r 0.09 :fill "red"}]
+         [:circle {:cx 0.5 :cy -0.15 :r 0.1 :fill "red"}]
+         [:circle {:cx 0.7 :cy 0.05 :r 0.11 :fill "red"}]
+         [:circle {:cx 0.65 :cy 0.35 :r 0.1 :fill "red"}]
+         [:circle {:cx 0.65 :cy -0.37 :r 0.08 :fill "red"}]]])))
+
+ [mafs/Mafs {:view-box {:x [-1 1] :y [-1 1]}}
+  [mafs.coordinates/Cartesian]
+  [mafs.debug/TransformWidget
+   [PizzaSlice]]])
+
+;; This is an example of a component that gets entirely transformed by the user
+;; and view transforms. The pizza slice can end up totally distorted. For cases
+;; where you want to preserve the aspect ratio or pixel size of your component,
+;; you likely need to use the hooks approach.
 
 ;; ## Thanks and Support
 

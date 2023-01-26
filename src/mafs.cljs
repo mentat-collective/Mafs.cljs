@@ -12,6 +12,8 @@
   (js->clj m/Theme :keywordize-keys true))
 
 (def labelPi m/labelPi)
+(def useTransformContext m/useTransformContext)
+(def useStopwatch m/useStopwatch)
 
 ;; ## Components
 
@@ -26,12 +28,7 @@
   "
   m/Mafs)
 
-(defcomponent CartesianCoordinates
-  "
-  - `:x-axis`
-  - `:y-axis`
-  - `:subdivisions`"
-  m/CartesianCoordinates)
+
 
 (defcomponent Point
   "
