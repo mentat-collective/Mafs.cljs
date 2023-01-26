@@ -6,7 +6,7 @@
     <groupId>org.mentat</groupId>
     <artifactId>mafs.cljs</artifactId>
     <name>mafs.cljs</name>
-    <description>A Reagent interface to the Mafs interactive 2d math visualization library.</description>
+    <description>Reagent interface to the Mafs interactive 2d math visualization library.</description>
     <url>https://mafs.mentat.org</url>
     <licenses>
         <license>
