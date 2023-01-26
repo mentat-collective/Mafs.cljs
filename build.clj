@@ -39,7 +39,11 @@
     (b/write-pom {:class-dir class-dir
                   :lib lib
                   :version version
-                  :scm {:tag (str "v" version)}
+                  :scm
+                  {:tag (str "v" version)
+                   :connection "scm:git:git://github.com/mentat-collective/mafs.cljs.git"
+                   :developConnection "scm:git:ssh://git@github.com/mentat-collective/mafs.cljs.git"
+                   :url "https://github.com/mentat-collective/mafs.cljs"}
                   :basis basis
                   :src-pom "template/pom.xml"
                   :src-dirs ["src"]
