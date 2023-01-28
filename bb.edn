@@ -1,6 +1,14 @@
 {:pods {clj-kondo/clj-kondo {:version "2023.01.20"}}
  :tasks
- {:requires ([pod.borkdude.clj-kondo :as clj-kondo])
+ {:init
+  (defn X [cmd]
+    (let [args *command-line-args*]
+      (if (even? (count args))
+        (apply shell cmd args)
+        (do (println "Please supply an even number of arguments!")
+            (System/exit 1)))))
+
+  :requires ([pod.borkdude.clj-kondo :as clj-kondo])
 
   dev-notebook
   {:doc "Start a shadow-cljs watch process that generates this project's custom JS."
@@ -10,8 +18,7 @@
 
   start-clerk
   {:doc "Start a Clerk dev server configured with this project's custom JS."
-   :task
-   (shell "clojure -X:dev:nextjournal/clerk user/start!")}
+   :task (X "clojure -X:dev:nextjournal/clerk user/start!")}
 
   publish-gh-pages
   {:doc "Generate a fresh static build."

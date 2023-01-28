@@ -7,6 +7,7 @@
             [nextjournal.clerk.config :as config]
             [nextjournal.clerk.view]
             [nextjournal.clerk.viewer :as cv]
+            [shadow.cljs.devtools.server :as ss]
             [shadow.cljs.devtools.api :as shadow]))
 
 (def index
@@ -47,15 +48,18 @@
 (defn start!
   "Runs [[clerk/serve!]] with our custom JS. Run this after generating custom JS
   with shadow in either production or `watch` mode."
-  []
-  (swap! config/!resource->url
-         assoc
-         "/js/viewer.js" "http://localhost:8765/js/main.js")
-  (clerk/serve!
-   {:browse? true
-    :watch-paths ["dev"]})
-  (Thread/sleep 500)
-  (clerk/show! index))
+  ([] (start! {}))
+  ([_]
+   (ss/start!)
+   (shadow/watch :clerk)
+   (swap! config/!resource->url
+          assoc
+          "/js/viewer.js" "http://localhost:8765/js/main.js")
+   (clerk/serve!
+    {:browse? true
+     :watch-paths ["dev"]})
+   (Thread/sleep 500)
+   (clerk/show! index)))
 
 (defn git-sha
   "Returns the sha hash of this project's current git revision."
