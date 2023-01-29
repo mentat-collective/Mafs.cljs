@@ -133,4 +133,4 @@ Distributed under the [MIT License](LICENSE). See [LICENSE](LICENSE).
 [mentat-slack-url]: https://clojurians.slack.com/archives/C041G9B1AAK
 [github-url]: https://github.com/mentat-collective/mafs.cljs
 [reagent-url]: https://reagent-project.github.io/
-[mafs-url]: https://mafs.deb
+[mafs-url]: https://mafs.dev
