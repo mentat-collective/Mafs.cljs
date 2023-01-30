@@ -12,12 +12,12 @@
   {:extra-paths ["dev"]
    :extra-deps
    {io.github.nextjournal/clerk
-    {:git/sha "ec666210f11763fce4fec74072acca1e6525d29f"}
+    {:git/sha "4180ed31c2864687a770f6d4f625303bd8e75437"}
     io.github.nextjournal/clerk.render
     {:git/url "https://github.com/nextjournal/clerk"
-     :git/sha "ec666210f11763fce4fec74072acca1e6525d29f"
+     :git/sha "4180ed31c2864687a770f6d4f625303bd8e75437"
      :deps/root "render"}
-    org.mentat/clerk-utils {:mvn/version "0.2.0"}}
+    org.mentat/clerk-utils {:local/root "../clerk-utils"}}
    :exec-fn user/garden!}
 
   :build

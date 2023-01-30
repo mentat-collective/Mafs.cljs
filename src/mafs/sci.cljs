@@ -5,7 +5,8 @@
             [mafs.line]
             [mafs.plot]
             [mafs.vec]
-            [sci.core :as sci]))
+            [sci.core :as sci]
+            [sci.ctx-store]))
 
 (def mafs-namespace
   (sci/copy-ns mafs (sci/create-ns 'mafs)))
@@ -34,4 +35,10 @@
    'mafs.vec mafs-vec-namespace})
 
 (def config
-  {:namespaces namespaces})
+  {:classes {'Math js/Math}
+   :namespaces namespaces})
+
+(defn install! []
+  (sci.ctx-store/swap-ctx!
+   sci/merge-opts
+   config))

@@ -3,8 +3,8 @@
  :no-cache true
  :visibility :hide-ns}
 (ns mafs.notebook
-  {:nextjournal.clerk/auto-expand-results? true}
-  (:require [mentat.clerk-utils.show :refer [show-sci]]))
+  (:require [mentat.clerk-utils.build :as b]
+            [mentat.clerk-utils.show :refer [show-sci]]))
 
 ;; # Mafs.cljs
 ;;
@@ -73,15 +73,13 @@
 ;; at its Clojars page:
 
 ;; [![Clojars
-;;    Project](https://img.shields.io/clojars/v/org.mentat/mafs.cljs.svg)](https://clojars.org/org.mentat/mafs.cljs)
-;;
+;; Project](https://img.shields.io/clojars/v/org.mentat/mafs.cljs.svg)](https://clojars.org/org.mentat/mafs.cljs)
+
 ;; Or grab the most recent code using a Git dependency:
-;;
-;; ```clj
-;; ;; deps
-;; {io.github.mentat-collective/mafs.cljs
-;;   {:git/sha "$GIT_SHA"}}
-;; ```
+
+^{:nextjournal.clerk/visibility {:code :hide}}
+(b/git-dependency
+ "mentat-collective/mafs.cljs")
 
 ;; Require `mafs` and any of the component namespaces that you'd like to use in
 ;; your ClojureScript namespace:
