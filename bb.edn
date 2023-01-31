@@ -13,12 +13,11 @@
   {:doc "Start a shadow-cljs watch process that generates this project's custom JS."
    :task (X "clojure -X:nextjournal/clerk user/start!")}
 
-
   build-static
   {:doc "Generate a fresh static build."
    :task
    (apply shell
-          "clojure -X:nextjournal/clerk user/static-build!"
+          "clojure -X:nextjournal/clerk"
           *command-line-args*)}
 
   release-gh-pages

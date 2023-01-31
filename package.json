@@ -37,7 +37,7 @@
     "shadow-cljs": "2.20.14"
   },
   "scripts": {
-    "serve": "http-server -c-1 -o -d public/build",
+    "serve": "http-server public/build -c-1 -o -d",
     "gh-pages": "gh-pages -d public/build --dotfiles true"
   }
 }
