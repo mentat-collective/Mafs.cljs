@@ -36,7 +36,7 @@ your ClojureScript namespace:
 
 ```clj
 (ns my-app
-  (:require [mafs]
+  (:require [mafs.core :as mafs]
             [mafs.coordinates]
             [mafs.plot]
             [mafs.line]
@@ -86,19 +86,11 @@ you'd like to edit or play with the documentation, you'll need to install
 - The [clojure command line tool](https://clojure.org/guides/install_clojure)
 - [Babashka](https://github.com/babashka/babashka#installation)
 
-Once this is done, run this command in one terminal window to build and serve
-the custom JS required by the notebook:
+Once this is done, run this command:
 
 ```
-bb dev-notebook
+bb clerk-watch
 ```
-
-In another terminal window, run
-
-```
-bb start-clerk
-```
-
 This should open a browser window to `http://localhost:7777` with the contents
 of the documentation notebook. Any edits you make to `dev/mafs/notebook.clj`
 will be picked up and displayed in the browser on save.
@@ -132,4 +124,4 @@ Distributed under the [MIT License](LICENSE). See [LICENSE](LICENSE).
 [license]: https://img.shields.io/badge/license-MIT-brightgreen.svg
 [github-url]: https://github.com/mentat-collective/mafs.cljs
 [reagent-url]: https://reagent-project.github.io/
-[mafs-url]: https://mafs.deb
+[mafs-url]: https://mafs.dev

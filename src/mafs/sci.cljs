@@ -1,6 +1,6 @@
 (ns mafs.sci
-  (:require [mafs]
-            [mafs.coordinates]
+  (:require [mafs.coordinates]
+            [mafs.core]
             [mafs.debug]
             [mafs.line]
             [mafs.plot]
@@ -8,8 +8,8 @@
             [sci.core :as sci]
             [sci.ctx-store]))
 
-(def mafs-namespace
-  (sci/copy-ns mafs (sci/create-ns 'mafs)))
+(def mafs-core-namespace
+  (sci/copy-ns mafs.core (sci/create-ns 'mafs.core)))
 
 (def mafs-coordinates-namespace
   (sci/copy-ns mafs.coordinates (sci/create-ns 'mafs.coordinates)))
@@ -27,7 +27,7 @@
   (sci/copy-ns mafs.vec (sci/create-ns 'mafs.vec)))
 
 (def namespaces
-  {'mafs mafs-namespace
+  {'mafs.core mafs-core-namespace
    'mafs.coordinates mafs-coordinates-namespace
    'mafs.plot mafs-plot-namespace
    'mafs.line mafs-line-namespace
@@ -38,7 +38,10 @@
   {:classes {'Math js/Math}
    :namespaces namespaces})
 
-(defn install! []
-  (sci.ctx-store/swap-ctx!
-   sci/merge-opts
-   config))
+(defn install!
+  "TODO docs"
+  ([] (install! {}))
+  ([aliases]
+   (sci.ctx-store/swap-ctx!
+    sci/merge-opts
+    (assoc config :aliases aliases))))

@@ -81,12 +81,12 @@
 (b/git-dependency
  "mentat-collective/mafs.cljs")
 
-;; Require `mafs` and any of the component namespaces that you'd like to use in
-;; your ClojureScript namespace:
+;; Require `mafs.core` and any of the component namespaces that you'd like to
+;; use in your ClojureScript namespace:
 
 ;; ```clj
 ;; (ns my-app
-;;   (:require [mafs]
+;;   (:require [mafs.core :as mafs]
 ;;             [mafs.coordinates]
 ;;             [mafs.plot]
 ;;             [mafs.line]
