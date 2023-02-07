@@ -88,9 +88,10 @@ you'd like to edit or play with the documentation, you'll need to install
 
 Once this is done, run this command:
 
-```
+```sh
 bb clerk-watch
 ```
+
 This should open a browser window to `http://localhost:7777` with the contents
 of the documentation notebook. Any edits you make to `dev/mafs/notebook.clj`
 will be picked up and displayed in the browser on save.
