@@ -14,7 +14,7 @@
   {:index index
    :browse? true
    :watch-paths ["dev"]
-   :cljs-namespaces '[mafs.clerk-ui]})
+   :cljs-namespaces '[mafs.sci-extensions]})
 
 (def static-defaults
   (assoc defaults
@@ -22,8 +22,8 @@
          :cname "mafs.mentat.org"
          :git/url "https://github.com/mentat-collective/mafs.cljs"))
 
-(defn start!
-  ([] (start! {}))
+(defn serve!
+  ([] (serve! {}))
   ([opts]
    (b/serve!
     (merge defaults opts))))

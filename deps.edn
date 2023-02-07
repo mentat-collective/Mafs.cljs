@@ -15,7 +15,7 @@
     {:git/url "https://github.com/nextjournal/clerk"
      :git/sha "4180ed31c2864687a770f6d4f625303bd8e75437"
      :deps/root "render"}}
-   :exec-fn user/static-build!}
+   :exec-fn user/build!}
 
   :build
   {:deps {io.github.clojure/tools.build {:git/tag "v0.8.2" :git/sha "ba1a2bf"}
