@@ -130,7 +130,6 @@ Distributed under the [MIT License](LICENSE). See [LICENSE](LICENSE).
 [discord]: https://img.shields.io/discord/731131562002743336?style=flat&colorA=000000&colorB=000000&label=&logo=discord
 [license-url]: LICENSE
 [license]: https://img.shields.io/badge/license-MIT-brightgreen.svg
-[mentat-slack-url]: https://clojurians.slack.com/archives/C041G9B1AAK
 [github-url]: https://github.com/mentat-collective/mafs.cljs
 [reagent-url]: https://reagent-project.github.io/
 [mafs-url]: https://mafs.deb
