@@ -3,8 +3,8 @@
  :no-cache true
  :visibility :hide-ns}
 (ns mafs.notebook
-  {:nextjournal.clerk/auto-expand-results? true}
-  (:require [mentat.clerk-utils.show :refer [show-sci]]))
+  (:require [mentat.clerk-utils.docs :as docs]
+            [mentat.clerk-utils.show :refer [show-sci]]))
 
 ;; # Mafs.cljs
 ;;
@@ -73,22 +73,20 @@
 ;; at its Clojars page:
 
 ;; [![Clojars
-;;    Project](https://img.shields.io/clojars/v/org.mentat/mafs.cljs.svg)](https://clojars.org/org.mentat/mafs.cljs)
-;;
-;; Or grab the most recent code using a Git dependency:
-;;
-;; ```clj
-;; ;; deps
-;; {io.github.mentat-collective/mafs.cljs
-;;   {:git/sha "$GIT_SHA"}}
-;; ```
+;; Project](https://img.shields.io/clojars/v/org.mentat/mafs.cljs.svg)](https://clojars.org/org.mentat/mafs.cljs)
 
-;; Require `mafs` and any of the component namespaces that you'd like to use in
-;; your ClojureScript namespace:
+;; Or grab the most recent code using a Git dependency:
+
+^{:nextjournal.clerk/visibility {:code :hide}}
+(docs/git-dependency
+ "mentat-collective/mafs.cljs")
+
+;; Require `mafs.core` and any of the component namespaces that you'd like to
+;; use in your ClojureScript namespace:
 
 ;; ```clj
 ;; (ns my-app
-;;   (:require [mafs]
+;;   (:require [mafs.core :as mafs]
 ;;             [mafs.coordinates]
 ;;             [mafs.plot]
 ;;             [mafs.line]
@@ -96,6 +94,26 @@
 ;;             [mafs.vec]
 ;;             [reagent.core :as reagent]))
 ;; ```
+;;
+;; You'll also need to include the stylesheets that ship with `mafs`. If you're
+;; using Clerk
+;; and [`clerk-utils`](https://github.com/mentat-collective/clerk-utils), add
+;; this form to your `dev/user.clj`:
+
+;; ```clj
+;; (mentat.clerk-utils.css/set-css!
+;;  "https://unpkg.com/mafs@0.15.2/core.css"
+;;  "https://unpkg.com/computer-modern@0.1.2/cmu-serif.css"
+;;  "https://unpkg.com/mafs@0.15.2/font.css")
+;; ```
+;;
+;; Otherwise find some way to load these CSS files in your project's header.
+;;
+;; > See the [guide on
+;; > https://mafs.dev](https://mafs.dev/guides/get-started/installation) for
+;; > more details on the stylesheets. `core.css` is required, the other two are
+;; > optional.
+
 ;;
 ;; The next section walks you through construction of your first Mafs scene.
 
@@ -208,7 +226,52 @@
 
 ;; The remainder of these guides are more specific: they cover components you
 ;; can add to your visualization. The rest is up to you and your imagination.
-;; The examples on this site might provide some inspiration, though.
+
+;; ## Mafs.cljs via SCI
+;;
+;; `Mafs.cljs` is compatible with [SCI, the Small Clojure
+;; Interpreter](https://github.com/babashka/sci).
+;;
+;; To install `Mafs.cljs` into your SCI context, require
+;; the [`mafs.sci`](https://cljdoc.org/d/org.mentat/mafs.cljs/CURRENT/api/mafs.sci)
+;; namespace and call `mafs.sci/install!`:
+
+;; ```clj
+;; (ns myproject.sci-extensions
+;;   (:require [mafs.sci]))
+
+;; ;; The `install!` command takes an optional map of alias => namespace.
+;; (mafs.sci/install!
+;;  {'mafs 'mafs.core})
+;; ```
+;;
+;; If you want more granular control, see the [cljdoc page for
+;; `mafs.sci`](https://cljdoc.org/d/org.mentat/mafs.cljs/CURRENT/api/mafs.sci)
+;; for an SCI config and distinct SCI namespace objects that you can piece
+;; together.
+;;
+;; > Note that `Mafs.cljs` does not ship with a dependency on SCI, so you'll
+;; > need to install your own version.
+;;
+;; ## Mafs.cljs via Clerk
+;;
+;; Using `Mafs.cljs` with Nextjournal's [Clerk](https://clerk.vision/) gives you
+;; the ability to write notebooks like this one with embedded 2D graphs.
+;;
+;; Doing this requires that you generate a custom ClojureScript build for your
+;; Clerk project. The easiest way to do this for an existing project is with
+;; the [`clerk-utils` project](https://clerk-utils.mentat.org/). Follow the
+;; instructions on the [`clerk-utils` guide for custom
+;; ClojureScript](https://clerk-utils.mentat.org/#custom-clojurescript-builds).
+;;
+;; If this is your first time using Clerk, use the [`clerk-utils/custom`
+;; template described here](https://clerk-utils.mentat.org/#project-template) to
+;; generate a new project.
+;;
+;; Once you have your custom build set up, follow the ["Extending
+;; SCI"](https://clerk-utils.mentat.org/#extending-sci) instructions and install
+;; `Mafs.cljs` using `mafs.sci/install!`, [as described
+;; above](#mafs.cljs-via-sci).
 
 ;; ## Components
 

@@ -1,4 +1,4 @@
-(ns mafs
+(ns mafs.core
   "Main components and helper functions for mafs."
   (:require ["mafs" :as m]
             [mafs.macros :refer [defcomponent]]
