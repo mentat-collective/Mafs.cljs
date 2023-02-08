@@ -4,7 +4,7 @@
 
 ## 0.2.0
 
-- #10 adds a `deps-new` template that sets up a basic Clerk project with
+- #12 adds a `deps-new` template that sets up a basic Clerk project with
   `Mafs.cljs` installed as a dependency. [The template lives
   here](https://github.com/mentat-collective/Mafs.cljs/tree/main/resources/mafs/clerk).
 
