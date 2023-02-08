@@ -14,7 +14,7 @@ clojure -Ttools install io.github.seancorfield/deps-new '{:git/tag "v0.4.13"}' :
 Then create a project using the `mafs/clerk` template:
 
 ```
-clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/tag "v0.2.0"}}}' \
+clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha "5b613fe5b2d4a9ad3294de51543d146a43a19ebc"}}}' \
 -Tnew create \
 :template mafs/clerk \
 :name myusername/my-mafs-project

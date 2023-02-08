@@ -73,13 +73,15 @@ phase-shift the plot:
 
 ![2023-01-26 10 56 58](https://user-images.githubusercontent.com/69635/214912521-11db5419-8271-46dc-8444-91438ab32948.gif)
 
+See the project's [interactive documentation notebook](https://mafs.mentat.org)
+for many more guides and examples.
+
+## Clerk Support
+
 If you want to use `Mafs.cljs` with [Clerk][clerk-url], check out the
 [`mafs/clerk` template][mafs-clerk-template-url]. This
 [`deps-new`][deps-new-url] template will generate a Clerk project for you, fully
 configured to use `Mafs.cljs` in your Clerk notebooks.
-
-See the project's [interactive documentation notebook](https://mafs.mentat.org)
-for many more guides and examples.
 
 ## Interactive Documentation via Clerk
 
