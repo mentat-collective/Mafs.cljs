@@ -1,5 +1,6 @@
 (ns {{top/ns}}.sci-extensions
     (:require [{{top/ns}}.custom]
+              [mafs.sci]
               [sci.ctx-store]
               [sci.core :as sci]))
 
@@ -8,6 +9,18 @@
 ;; This namespace extends the SCI environment used by Clerk, making available
 ;; any custom ClojureScript you'd like to use while [writing
 ;; viewers](https://book.clerk.vision/#writing-viewers) for your notebooks.
+
+;; ## Mafs.cljs installation
+;;
+;; This first section installs all `Mafs.cljs` namespaces into the project, along with an alias from `mafs.core` to `mafs`:
+
+(mafs.sci/install!
+ {'mafs 'mafs.core})
+
+;; See [`Mafs.cljs` via SCI](https://mafs.mentat.org/#mafs.cljs-via-sci) for
+;; more details.
+
+;; ## SCI Environment Extension
 
 ;; This form creates a "lives-within-SCI" version of the `clerk-utils.custom`
 ;; namespace by copying all public vars.

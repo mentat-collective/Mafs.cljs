@@ -1,5 +1,11 @@
 (ns user
-  (:require [mentat.clerk-utils.build :as b]))
+  (:require [mentat.clerk-utils.build :as b]
+            [mentat.clerk-utils.css :as css]))
+
+(css/set-css!
+ "https://unpkg.com/computer-modern@0.1.2/cmu-serif.css"
+ "https://unpkg.com/mafs@0.15.2/core.css"
+ "https://unpkg.com/mafs@0.15.2/font.css")
 
 (def index
   "notebooks/{{top/file}}/{{main/file}}.clj")

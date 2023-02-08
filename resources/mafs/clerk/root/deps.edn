@@ -1,6 +1,9 @@
 {:paths ["src" "dev" "notebooks"]
  :deps {org.clojure/clojure {:mvn/version "{{clj-version}}"}
         io.github.nextjournal/clerk {:git/sha "{{clerk-sha}}"}
+        org.mentat/mafs.cljs
+        {:local/root "../mafs.cljs"}
+        #_{:mvn/version "{{mafs-version}}"}
         io.github.mentat-collective/clerk-utils {:git/sha "{{clerk-utils-sha}}"}}
  :aliases
  {:nextjournal/clerk

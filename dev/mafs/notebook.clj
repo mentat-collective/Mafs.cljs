@@ -4,7 +4,8 @@
  :visibility :hide-ns}
 (ns mafs.notebook
   (:require [mentat.clerk-utils.docs :as docs]
-            [mentat.clerk-utils.show :refer [show-sci]]))
+            [mentat.clerk-utils.show :refer [show-sci]]
+            [nextjournal.clerk :as clerk]))
 
 ;; # Mafs.cljs
 ;;
@@ -16,8 +17,7 @@
 ;; [![cljdoc badge](https://cljdoc.org/badge/org.mentat/mafs.cljs)](https://cljdoc.org/d/org.mentat/mafs.cljs/CURRENT)
 ;; [![Clojars Project](https://img.shields.io/clojars/v/org.mentat/mafs.cljs.svg)](https://clojars.org/org.mentat/mafs.cljs)
 ;;
-;; > The interactive documentation on this page was generated from [this source
-;; > file](https://github.com/mentat-collective/mafs.cljs/blob/$GIT_SHA/dev/mafs/notebook.clj)
+;; > The interactive documentation on this page was generated
 ;; > using [Clerk](https://github.com/nextjournal/clerk). Follow
 ;; > the [instructions in the
 ;; > README](https://github.com/mentat-collective/mafs.cljs/tree/main#interactive-documentation-via-clerk)
@@ -41,7 +41,7 @@
 
 ;; > The 'show code' link below will expand the example's source.
 
-^{:nextjournal.clerk/visibility {:code :fold}}
+^{::clerk/visibility {:code :fold}}
 (show-sci
  (reagent/with-let
    [!point (reagent/atom [0.6 0.6])]
@@ -77,7 +77,7 @@
 
 ;; Or grab the most recent code using a Git dependency:
 
-^{:nextjournal.clerk/visibility {:code :hide}}
+^{::clerk/visibility {:code :hide}}
 (docs/git-dependency
  "mentat-collective/mafs.cljs")
 
@@ -129,7 +129,7 @@
 ;; We'll start with the same setup we had in “Installation” — just a Cartesian
 ;; coordinate plane with nothing too interesting on it.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   [mafs.coordinates/Cartesian]])
@@ -137,7 +137,7 @@
 ;; `Cartesian` is pretty customizable. Let's make our graph a little bit more
 ;; sophisticated-looking by adding some subdivisions.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   [mafs.coordinates/Cartesian {:subdivisions 4}]])
@@ -147,7 +147,7 @@
 ;; Plotting a function works by passing a literal ClojureScript function. Let's
 ;; plot `(Math/sin x)`.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   [mafs.coordinates/Cartesian {:subdivisions 4}]
@@ -165,7 +165,7 @@
 ;; - Zoom the y-axis in a bit
 ;; - Tell Mafs to let us squish the viewport
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   {:view-box {:x [-10 10] :y [-2 2]}
@@ -189,7 +189,7 @@
 ;; only natural to slide the wave back and forth to adjust the phase. Let's add
 ;; a movable point and hook it up to our function.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let [!phase (reagent/atom [0 0])]
    [:<>
@@ -273,6 +273,42 @@
 ;; `Mafs.cljs` using `mafs.sci/install!`, [as described
 ;; above](#mafs.cljs-via-sci).
 
+;; ## Project Template
+;;
+;; `Mafs.cljs` includes
+;; a [`deps-new`](https://github.com/seancorfield/deps-new) template called
+;; [`mafs/clerk`](https://github.com/mentat-collective/clerk-utils/tree/main/resources/clerk_utils/custom)
+;; that makes it easy to configure a new Clerk project with everything described
+;; in ["Mafs.cljs via Clerk"](#mafs.cljs-via-clerk) already configured.
+
+;; First, install the [`deps-new`](https://github.com/seancorfield/deps-new) tool:
+
+;; ```sh
+;; clojure -Ttools install io.github.seancorfield/deps-new '{:git/tag "v0.4.13"}' :as new
+;; ```
+
+;; To create a new Clerk project based on
+;; [`mafs/clerk`](https://github.com/mentat-collective/clerk-utils/tree/main/resources/clerk_utils/custom)
+;; in a folder called `my-notebook-project`, run the following command:
+
+^{::clerk/visibility {:code :hide}}
+(clerk/md
+ (format "
+```sh
+clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}}' \\
+-Tnew create \\
+:template mafs/clerk \\
+:name myusername/my-notebook-project
+```" (docs/git-sha)))
+
+;; The README.md file in the generated project contains information on how to
+;; develop within the new project.
+
+;; If you have an existing Clerk notebook project and are considering adding
+;; `Mafs.cljs`, you might consider
+;; using [`mafs/clerk`](https://github.com/mentat-collective/mafs.cljs/tree/main/resources/mafs/clerk)
+;; to get some ideas on how to structure your own project.
+
 ;; ## Components
 
 ;; ### Mafs
@@ -280,7 +316,7 @@
 ;; This component is the entrypoint into rendering visualizations. It must wrap
 ;; all other Mafs components. On its own, it renders a blank canvas.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs {:height 200}
   [mafs/Text {:x 0 :y 0} "I love math!"]])
@@ -306,7 +342,7 @@
 ;; Panning is enabled by default, but zooming is opt-in. The default zoom limits
 ;; are `{:min 0.5 :max 0.5}`.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   {:zoom {:min 0.1 :max 2}
@@ -328,7 +364,7 @@
 ;; a useful "viewbox" designating the region in which interesting things are
 ;; happening. Mafs allows you to specify this with the `:view-box` prop.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   {:view-box {:x [-5 5]
@@ -342,7 +378,7 @@
 ;; Mafs viewport. Setting it to false will stretch the viewbox to fit the
 ;; viewport, tossing aside the aspect ratio preservation.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   {:view-box {:x [-5 5]
@@ -359,7 +395,7 @@
 ;; Mafs adds a `:padding` of `0.5` to all visualizations by default. To change
 ;; or remove padding, you can specify `:padding` in the `:view-box` value.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   {:view-box {:x [-5 5]
@@ -376,7 +412,7 @@
 
 ;; #### Cartesian Coordinates
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   [mafs.coordinates/Cartesian]])
@@ -397,7 +433,7 @@
 ;; Mafs also exports a helper function, `mafs/labelPi` which can be passed to
 ;; `:labels` to render in terms of $\pi$.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   {:view-box {:x [-8 8]
@@ -418,7 +454,7 @@
 
 ;; #### Polar Coordinates
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   [mafs.coordinates/Polar
@@ -435,7 +471,7 @@
 
 ;; Points are dots that can be rendered at a location `(x, y)`.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs
   [mafs.coordinates/Cartesian]
@@ -448,7 +484,7 @@
 
 ;; #### Line Segment
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let
    [!state (reagent/atom
@@ -466,7 +502,7 @@
 
 ;; Line through two points
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let
    [!state (reagent/atom
@@ -484,7 +520,7 @@
 
 ;; #### Point and slope
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let
    [!state (reagent/atom
@@ -506,7 +542,7 @@
 
 ;; #### Point and angle
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let
    [!state (reagent/atom [-1 -1])]
@@ -521,7 +557,7 @@
 
 ;; Polygons take a number of points and create a closed shape.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let
    [a  [2 0]
@@ -542,7 +578,7 @@
 
 ;; Circles take a center vector and a radius.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let
    [!point-on-circle
@@ -561,7 +597,7 @@
 
 ;; Ellipses take a center vector, radius vector, and an angle.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let
    [hint-radius 3
@@ -614,7 +650,7 @@
 
 ;; #### Functions of $x$ and $y$
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (defn sigmoid1 [x]
    (dec (/ 2 (inc (Math/exp (- x))))))
@@ -626,7 +662,7 @@
 
 ;; #### Parametric functions
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (defn clamp [x min max]
    (cond
@@ -656,7 +692,7 @@
 ;; scaled down (for legibility) and plotted on the coordinate plane. You must
 ;; also pass a `:step` to indicate how dense the vector field is.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let
    [!point (reagent/atom [0.6 0.6])]
@@ -701,7 +737,7 @@
 ;; has `:min-sampling-depth` increased to `15`, Neither approach is perfect, but
 ;; the bottom render is indistinguishable from a perfect plot.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (let [f (fn [x] (Math/sin (/ 1 x)))]
    [mafs/Mafs {:view-box {:x [(/ -1 32) (/ 1 32)]
@@ -726,7 +762,7 @@
 ;; optional `:attach` will orient the text along a cardinal direction (`"n"`,
 ;; `"s"`, `"nw"` etc.)
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let [!point (reagent/atom [0.6 0.6])]
    [mafs/Mafs {:view-box {:y [0 2] :x [-3 5]}}
@@ -748,7 +784,7 @@
 ;; both vectors and matrices), exposing them as `mafs.vec` and `mafs.matrix`.
 ;; Those utilities are used extensively here.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let [!point (reagent/atom [0.4 0.6])]
    (let [[x y :as vec1] @!point
@@ -767,7 +803,7 @@
 ;; Sometimes it can be useful to apply 2D transformations to one or more
 ;; components collectively. This is where `mafs/Transform` comes in handy.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (defn HelloBox []
    [:<>
@@ -840,7 +876,7 @@
 ;; in `mafs.debug/TransformWrapper`. It's mainly useful when building new custom
 ;; components.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (defn PizzaSlice []
    (let [mask-id
@@ -876,7 +912,7 @@
 ;; view, showing both the minimum and maximum `x` and `y` values, as well as
 ;; what panes are visible according to the pane context.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  [mafs/Mafs {:view-box {:x [-1 1] :y [-1 1]}}
   [mafs.coordinates/Cartesian]
@@ -891,7 +927,7 @@
 ;; or vertically, or constrained to an arbitrary function. This example
 ;; constrains movement horizontally:
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (reagent/with-let
    [n      10
@@ -1003,7 +1039,7 @@
 ;; `mafs.debug/TransformWidget` component so that you can try applying some user
 ;; transforms to it.
 
-^{:nextjournal.clerk/width :wide}
+^{::clerk/width :wide}
 (show-sci
  (defn PizzaSlice []
    (let [mask-id
