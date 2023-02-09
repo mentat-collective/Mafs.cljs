@@ -1,6 +1,7 @@
 (ns user
   (:require [mentat.clerk-utils.build :as b]
-            [mentat.clerk-utils.css :as css]))
+            [mentat.clerk-utils.css :as css]
+            [nextjournal.clerk :as clerk]))
 
 (css/set-css!
  "https://unpkg.com/computer-modern@0.1.2/cmu-serif.css"
