@@ -16,7 +16,7 @@
                 (System/exit 1))))))
 
   clerk-watch
-  {:doc "Runs clerk/serve! with a watcher process generating custom JS."
+  {:doc "Runs `user/serve!` with a watcher process generating custom JS."
    :task (X "clojure -X:nextjournal/clerk user/serve!")}
 
   build-static

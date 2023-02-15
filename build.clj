@@ -33,9 +33,9 @@
 ;; source for jar creation.
 (def class-dir "target/classes")
 (def basis
-  (-> (b/create-basis
-       {:project "deps.edn"
-        :extra {:deps pom-deps}})))
+  (b/create-basis
+   {:project "deps.edn"
+    :extra {:deps pom-deps}}))
 
 (defn ->jar-file [version]
   (format "target/%s-%s.jar" (name lib) version))
