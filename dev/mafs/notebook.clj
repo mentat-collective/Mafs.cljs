@@ -7,6 +7,12 @@
             [mentat.clerk-utils.show :refer [show-sci]]
             [nextjournal.clerk :as clerk]))
 
+^{::clerk/visibility {:code :hide :result :hide}}
+(clerk/eval-cljs
+ ;; These aliases only apply inside this namespace.
+ '(require '[mafs.core :as mafs])
+ '(require '[reagent.core :as reagent]))
+
 ;; # Mafs.cljs
 ;;
 ;; A [Reagent](https://reagent-project.github.io/) interface to
@@ -240,9 +246,7 @@
 ;; (ns myproject.sci-extensions
 ;;   (:require [mafs.sci]))
 
-;; ;; The `install!` command takes an optional map of alias => namespace.
-;; (mafs.sci/install!
-;;  {'mafs 'mafs.core})
+;; (mafs.sci/install!)
 ;; ```
 ;;
 ;; If you want more granular control, see the [cljdoc page for

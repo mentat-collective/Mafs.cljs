@@ -46,6 +46,16 @@
 
 ;; ## Mafs Quickstart
 
+;; First, we'll use `clerk/eval-cljs` to install some nice aliases into this
+;; notebook's namespace:
+
+(clerk/eval-cljs
+ '(require '[reagent.core :as reagent])
+ '(require '[mafs.core :as mafs]))
+
+;; > Note that you can also use fully-qualified names of any namespace installed
+;; > into SCI via the `{{top/ns}}.sci-extensions` namespace.
+
 ;; The following snippet implements the example from the ["Making Things
 ;; Interactive"](https://mafs.mentat.org/#making-things-interactive) section of
 ;; the [`Mafs.cljs` docs
@@ -91,14 +101,14 @@
 ;; ## Mafs Clerk Viewer
 ;;
 ;; Here's an example of a viewer that lets us instantiate a `Mafs.cljs` graph
-;; using data from the JVM. This viewer takes its `:view-box` argument:
+;; using data from the JVM. This viewer takes a `view-box` argument from the JVM
+;; and passes it as a property to the `mafs/Mafs` component:
 
-(def square-viewer
+(def parabola-viewer
   {:transform-fn clerk/mark-presented
    :render-fn
    '(fn [view-box]
-      (js/console.log view-box)
-      (reagent/with-let [!phase (reagent/atom [0 0])]
+      (reagent/with-let [!root (reagent/atom [0 0])]
         [:<>
          [mafs/Mafs
           {:view-box view-box
@@ -109,16 +119,16 @@
             {:lines Math/PI
              :labels mafs/labelPi}}]
           [mafs.plot/OfX
-           {:y (let [zero (first @!phase)]
+           {:y (let [zero (first @!root)]
                  (fn [x]
                    (* x (- x zero))))}]
           [mafs/MovablePoint
-           {:atom !phase
+           {:atom !root
             :constrain "horizontal"}]]
          [:pre
-          (str "Phase shift: " (first @!phase))]]))})
+          (str "Function root: " (first @!root))]]))})
 
 ;; We can apply it here:
-^{::clerk/viewer square-viewer}
+^{::clerk/viewer parabola-viewer}
 {:x [-10 10]
  :y [-2 2]}

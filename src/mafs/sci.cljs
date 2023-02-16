@@ -44,18 +44,8 @@
    :namespaces namespaces})
 
 (defn install!
-  "Called with no arguments, installs [[config]] into the shared SCI context
-  store.
-
-  Takes an optional `:aliases` map of alias symbol => namespace symbol.
-
-  For example, to install all namespaces, but alias `mafs.core` to `mafs`, call:
-
-  ```clj
-  (mafs.sci/install! {'mafs 'mafs.core})
-  ```"
-  ([] (install! {}))
-  ([aliases]
-   (sci.ctx-store/swap-ctx!
-    sci/merge-opts
-    (assoc config :aliases aliases))))
+  "Installs [[config]] into the shared SCI context store."
+  []
+  (sci.ctx-store/swap-ctx!
+   sci/merge-opts
+   config))

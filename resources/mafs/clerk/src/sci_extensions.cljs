@@ -12,10 +12,9 @@
 
 ;; ## Mafs.cljs installation
 ;;
-;; This first section installs all `Mafs.cljs` namespaces into the project, along with an alias from `mafs.core` to `mafs`:
+;; This first section installs all `Mafs.cljs` namespaces into the project:
 
-(mafs.sci/install!
- {'mafs 'mafs.core})
+(mafs.sci/install!)
 
 ;; See [`Mafs.cljs` via SCI](https://mafs.mentat.org/#mafs.cljs-via-sci) for
 ;; more details.
