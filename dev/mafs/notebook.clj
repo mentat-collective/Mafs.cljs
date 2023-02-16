@@ -268,14 +268,9 @@
 ;; instructions on the [`clerk-utils` guide for custom
 ;; ClojureScript](https://clerk-utils.mentat.org/#custom-clojurescript-builds).
 ;;
-;; If this is your first time using Clerk, use the [`clerk-utils/custom`
-;; template described here](https://clerk-utils.mentat.org/#project-template) to
-;; generate a new project.
-;;
-;; Once you have your custom build set up, follow the ["Extending
-;; SCI"](https://clerk-utils.mentat.org/#extending-sci) instructions and install
-;; `Mafs.cljs` using `mafs.sci/install!`, [as described
-;; above](#mafs.cljs-via-sci).
+;; If this is your first time using Clerk, use the [`mafs/clerk` template
+;; described below](#project-template) to generate a new project with all steps
+;; described in ["Mafs.cljs via SCI"](#mafs.cljs-via-sci) already completed.
 
 ;; ## Project Template
 ;;
@@ -283,7 +278,7 @@
 ;; a [`deps-new`](https://github.com/seancorfield/deps-new) template called
 ;; [`mafs/clerk`](https://github.com/mentat-collective/clerk-utils/tree/main/resources/clerk_utils/custom)
 ;; that makes it easy to configure a new Clerk project with everything described
-;; in ["Mafs.cljs via Clerk"](#mafs.cljs-via-clerk) already configured.
+;; in ["Mafs.cljs via SCI"](#mafs.cljs-via-sci) already configured.
 
 ;; First, install the [`deps-new`](https://github.com/seancorfield/deps-new) tool:
 

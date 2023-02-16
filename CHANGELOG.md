@@ -4,7 +4,8 @@
 
 - #14:
 
-  - Adds a `provided` dependency to `pom.xml`, so that cljdoc builds succeed.
+  - Adds a `provided` dependency on SCI to `pom.xml`, so that cljdoc builds
+    succeed.
 
   - Upgrades to Clerk version `fad499407d979916d21b33cc7e46e73f7a485e37` for the
     template and project docs notebook, along with a matching clerk-utils
