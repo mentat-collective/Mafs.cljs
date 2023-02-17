@@ -104,7 +104,7 @@
 ;; You'll also need to include the stylesheets that ship with `mafs`. If you're
 ;; using Clerk
 ;; and [`clerk-utils`](https://github.com/mentat-collective/clerk-utils), add
-;; this form to your `dev/user.clj`:
+;; this form to `dev/user.clj`:
 
 ;; ```clj
 ;; (mentat.clerk-utils.css/set-css!
@@ -119,7 +119,6 @@
 ;; > https://mafs.dev](https://mafs.dev/guides/get-started/installation) for
 ;; > more details on the stylesheets. `core.css` is required, the other two are
 ;; > optional.
-
 ;;
 ;; The next section walks you through construction of your first Mafs scene.
 
@@ -276,7 +275,7 @@
 ;;
 ;; `Mafs.cljs` includes
 ;; a [`deps-new`](https://github.com/seancorfield/deps-new) template called
-;; [`mafs/clerk`](https://github.com/mentat-collective/clerk-utils/tree/main/resources/clerk_utils/custom)
+;; [`mafs/clerk`](https://github.com/mentat-collective/mafs.cljs/tree/main/resources/mafs/clerk)
 ;; that makes it easy to configure a new Clerk project with everything described
 ;; in ["Mafs.cljs via SCI"](#mafs.cljs-via-sci) already configured.
 
@@ -287,7 +286,7 @@
 ;; ```
 
 ;; To create a new Clerk project based on
-;; [`mafs/clerk`](https://github.com/mentat-collective/clerk-utils/tree/main/resources/clerk_utils/custom)
+;; [`mafs/clerk`](https://github.com/mentat-collective/mafs.cljs/tree/main/resources/mafs/clerk)
 ;; in a folder called `my-notebook-project`, run the following command:
 
 ^{::clerk/visibility {:code :hide}}
@@ -300,7 +299,7 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
 :name myusername/my-notebook-project
 ```" (docs/git-sha)))
 
-;; The README.md file in the generated project contains information on how to
+;; The `README.md` file in the generated project contains information on how to
 ;; develop within the new project.
 
 ;; If you have an existing Clerk notebook project and are considering adding
