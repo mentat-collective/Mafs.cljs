@@ -67,7 +67,7 @@ The new release will appear on Clojars.
 
 ## Linting
 
-Code is linted with `clj-kondo`:
+Code is linted with [`clj-kondo`](https://github.com/clj-kondo/clj-kondo):
 
 ```
 bb lint

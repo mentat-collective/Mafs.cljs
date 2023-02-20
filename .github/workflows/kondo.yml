@@ -12,10 +12,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - uses: DeLaGuardo/setup-clojure@master
-        with:
-          cli: latest
-
       - name: Install babashka
         uses: just-sultanov/setup-babashka@v2
         with:

@@ -3,5 +3,4 @@
 
 ;; ## SCI Customization
 
-(mafs.sci/install!
- {'mafs 'mafs.core})
+(mafs.sci/install!)

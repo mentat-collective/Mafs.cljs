@@ -12,10 +12,9 @@
 
 ;; ## Mafs.cljs installation
 ;;
-;; This first section installs all `Mafs.cljs` namespaces into the project, along with an alias from `mafs.core` to `mafs`:
+;; This first section installs all `Mafs.cljs` namespaces into the project:
 
-(mafs.sci/install!
- {'mafs 'mafs.core})
+(mafs.sci/install!)
 
 ;; See [`Mafs.cljs` via SCI](https://mafs.mentat.org/#mafs.cljs-via-sci) for
 ;; more details.
@@ -55,8 +54,7 @@
 
 ;; ## JavaScript Libraries
 ;;
-;; See the [JavaScript
-;; Libraries](https://clerk-utils.mentat.org/#javascript-libraries) section of
-;; the [Clerk-utils docs](https://clerk-utils.mentat.org) for instructions on
-;; how to make NPM dependencies like "react" available inside of Clerk's
-;; viewers.
+;; See the [Extending SCI](https://clerk-utils.mentat.org/#extending-sci)
+;; section of the [Clerk-utils docs](https://clerk-utils.mentat.org) for
+;; instructions on how to make NPM dependencies like "react" available inside of
+;; Clerk's viewers.

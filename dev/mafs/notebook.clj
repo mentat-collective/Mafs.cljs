@@ -7,6 +7,12 @@
             [mentat.clerk-utils.show :refer [show-sci]]
             [nextjournal.clerk :as clerk]))
 
+^{::clerk/visibility {:code :hide :result :hide}}
+(clerk/eval-cljs
+ ;; These aliases only apply inside this namespace.
+ '(require '[mafs.core :as mafs])
+ '(require '[reagent.core :as reagent]))
+
 ;; # Mafs.cljs
 ;;
 ;; A [Reagent](https://reagent-project.github.io/) interface to
@@ -98,7 +104,7 @@
 ;; You'll also need to include the stylesheets that ship with `mafs`. If you're
 ;; using Clerk
 ;; and [`clerk-utils`](https://github.com/mentat-collective/clerk-utils), add
-;; this form to your `dev/user.clj`:
+;; this form to `dev/user.clj`:
 
 ;; ```clj
 ;; (mentat.clerk-utils.css/set-css!
@@ -113,7 +119,6 @@
 ;; > https://mafs.dev](https://mafs.dev/guides/get-started/installation) for
 ;; > more details on the stylesheets. `core.css` is required, the other two are
 ;; > optional.
-
 ;;
 ;; The next section walks you through construction of your first Mafs scene.
 
@@ -240,9 +245,7 @@
 ;; (ns myproject.sci-extensions
 ;;   (:require [mafs.sci]))
 
-;; ;; The `install!` command takes an optional map of alias => namespace.
-;; (mafs.sci/install!
-;;  {'mafs 'mafs.core})
+;; (mafs.sci/install!)
 ;; ```
 ;;
 ;; If you want more granular control, see the [cljdoc page for
@@ -264,22 +267,17 @@
 ;; instructions on the [`clerk-utils` guide for custom
 ;; ClojureScript](https://clerk-utils.mentat.org/#custom-clojurescript-builds).
 ;;
-;; If this is your first time using Clerk, use the [`clerk-utils/custom`
-;; template described here](https://clerk-utils.mentat.org/#project-template) to
-;; generate a new project.
-;;
-;; Once you have your custom build set up, follow the ["Extending
-;; SCI"](https://clerk-utils.mentat.org/#extending-sci) instructions and install
-;; `Mafs.cljs` using `mafs.sci/install!`, [as described
-;; above](#mafs.cljs-via-sci).
+;; If this is your first time using Clerk, use the [`mafs/clerk` template
+;; described below](#project-template) to generate a new project with all steps
+;; described in ["Mafs.cljs via SCI"](#mafs.cljs-via-sci) already completed.
 
 ;; ## Project Template
 ;;
 ;; `Mafs.cljs` includes
 ;; a [`deps-new`](https://github.com/seancorfield/deps-new) template called
-;; [`mafs/clerk`](https://github.com/mentat-collective/clerk-utils/tree/main/resources/clerk_utils/custom)
+;; [`mafs/clerk`](https://github.com/mentat-collective/mafs.cljs/tree/main/resources/mafs/clerk)
 ;; that makes it easy to configure a new Clerk project with everything described
-;; in ["Mafs.cljs via Clerk"](#mafs.cljs-via-clerk) already configured.
+;; in ["Mafs.cljs via SCI"](#mafs.cljs-via-sci) already configured.
 
 ;; First, install the [`deps-new`](https://github.com/seancorfield/deps-new) tool:
 
@@ -288,7 +286,7 @@
 ;; ```
 
 ;; To create a new Clerk project based on
-;; [`mafs/clerk`](https://github.com/mentat-collective/clerk-utils/tree/main/resources/clerk_utils/custom)
+;; [`mafs/clerk`](https://github.com/mentat-collective/mafs.cljs/tree/main/resources/mafs/clerk)
 ;; in a folder called `my-notebook-project`, run the following command:
 
 ^{::clerk/visibility {:code :hide}}
@@ -301,7 +299,7 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
 :name myusername/my-notebook-project
 ```" (docs/git-sha)))
 
-;; The README.md file in the generated project contains information on how to
+;; The `README.md` file in the generated project contains information on how to
 ;; develop within the new project.
 
 ;; If you have an existing Clerk notebook project and are considering adding
