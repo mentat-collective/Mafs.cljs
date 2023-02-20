@@ -12,7 +12,7 @@ the library's use.
 
 ### Local Notebook Dev
 
-Start a Clojure process however you like, and run `(user/start!)` to run the
+Start a Clojure process however you like, and run `(user/serve!)` to run the
 Clerk server. This command should open up `localhost:7777`.
 
 Alternatively, run

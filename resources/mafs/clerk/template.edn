@@ -1,6 +1,6 @@
 {:description "TODO replace me with a description of your project!"
  :clerk-port 7777
- :mafs-version "0.2.0"
+ :mafs-version "0.2.1"
  :clerk-sha "fad499407d979916d21b33cc7e46e73f7a485e37"
  :clerk-utils-sha "8d8986e835e396443560a34fb29a2033a47f6bd0"
  :shadow-port 8765
