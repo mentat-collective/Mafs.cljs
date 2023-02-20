@@ -17,7 +17,7 @@
 ;; ## Variables
 
 (def lib 'org.mentat/mafs.cljs)
-(def version "0.2.1-SNAPSHOT")
+(def version "0.2.1")
 (def pom-deps
   {'org.babashka/sci
    {:mvn/version "0.6.37"
