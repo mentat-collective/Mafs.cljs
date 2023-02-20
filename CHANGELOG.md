@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## [0.3.0]
+
 - #14:
 
   - Adds a `provided` dependency on SCI to `pom.xml`, so that cljdoc builds
