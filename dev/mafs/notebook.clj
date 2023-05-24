@@ -1,8 +1,7 @@
-^#:nextjournal.clerk
-{:toc true
- :no-cache true
- :visibility :hide-ns}
+^{:nextjournal.clerk/visibility {:code :hide}}
 (ns mafs.notebook
+  #:nextjournal.clerk
+  {:toc true :no-cache true}
   (:require [mentat.clerk-utils.docs :as docs]
             [mentat.clerk-utils.show :refer [show-sci]]
             [nextjournal.clerk :as clerk]))
@@ -10,8 +9,8 @@
 ^{::clerk/visibility {:code :hide :result :hide}}
 (clerk/eval-cljs
  ;; These aliases only apply inside this namespace.
- '(require '[mafs.core :as mafs])
- '(require '[reagent.core :as reagent]))
+ '(do (require '[mafs.core :as mafs])
+      (require '[reagent.core :as reagent])))
 
 ;; # Mafs.cljs
 ;;
@@ -716,10 +715,9 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
      {:step 0.5
       :xy
       (let [[ax ay] @!point]
-        (fn [input]
-          (let [[x y] input]
-            [(- (- y ay) (- x ax))
-             (- (- (- x ax)) (- y ay))])))
+        (fn [[x y]]
+          [(- (- y ay) (- x ax))
+           (- (- (- x ax)) (- y ay))]))
       :xy-opacity
       (fn [[x y]]
         (/ (+ (Math/abs x) (Math/abs y))
