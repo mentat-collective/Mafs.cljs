@@ -1,8 +1,8 @@
 (ns mafs.plot
   (:require ["mafs" :as m]
-            [mafs.macros :refer [defcomponent]]))
+            [mafs.core :as mafs]))
 
-(defcomponent OfX
+(defn OfX
   "
   - `:y`
   - `:svg-path-props`
@@ -13,9 +13,12 @@
   - `:weight`
   - `:style`
   "
-  (.-OfX m/Plot))
+  [opts]
+  [:>
+   (.-OfX m/Plot)
+   (mafs/process-color opts)])
 
-(defcomponent OfY
+(defn OfY
   "
   - `:x`
   - `:svg-path-props`
@@ -26,9 +29,40 @@
   - `:weight`
   - `:style`
   "
-  (.-OfY m/Plot))
+  [opts]
+  [:>
+   (.-OfY m/Plot)
+   (mafs/process-color opts)])
 
-(defcomponent Parametric
+(defn Inequality
+  "
+
+  - `:x`
+  - `:y`
+  - `:color`
+  - `:weight`
+  - `:stroke-color`
+  - `:stroke-opacity`
+  - `:fill-color`
+  - `:fill-opacity`
+  - `:min-sampling-depth`
+  - :`max-sampling-depth`
+  - `:upper-color`
+  - `:upper-weight`
+  - `:upper-opacity`
+  - `:lower-color`
+  - `:lower-weight`
+  - `:lower-opacity`
+  - `:svg-upper-path-props`
+  - `:svg-lower-path-props`
+  - `:svg-fill-path-props`
+  "
+  [opts]
+  [:>
+   (.-Inequality m/Plot)
+   (mafs/process-color opts)])
+
+(defn Parametric
   "
   - `:xy`
   - `:t`
@@ -40,9 +74,17 @@
   - `:weight`
   - `:style`
   "
-  (.-Parametric m/Plot))
+  [opts]
+  [:>
+   (.-Parametric m/Plot)
+   (mafs/process-color opts)])
 
-(defcomponent VectorField
+(defn ^:no-doc ->array-fn [f]
+  (fn [input]
+    (let [ret (f (into [] input))]
+      (apply array ret))))
+
+(defn VectorField
   "
   - `:xy`
   - `:xy-opacity`
@@ -50,4 +92,8 @@
   - `:opacity-step`
   - `:color`
   - `:style`"
-  (.-VectorField m/Plot))
+  [opts]
+  [:>
+   (.-VectorField m/Plot)
+   (-> (mafs/process-color opts)
+       (update :xy ->array-fn))])

@@ -1,45 +1,57 @@
 (ns mafs.core
   "Main components and helper functions for mafs."
   (:require ["mafs" :as m]
-            [mafs.macros :refer [defcomponent]]
             [reagent.core :as reagent]))
 
-;; TODO process the function argument return values to return js arrays vs
-;; vectors.
-
 ;; ## Helpers
-
-(def Theme
-  (js->clj m/Theme :keywordize-keys true))
 
 (def labelPi m/labelPi)
 (def useTransformContext m/useTransformContext)
 (def useStopwatch m/useStopwatch)
 
+(def Theme
+  (js->clj m/Theme :keywordize-keys true))
+
+(defn ^:no-doc split-opts [children]
+  (if (map? (first children))
+    [(first children) (rest children)]
+    [{} children]))
+
+(defn ^:no-doc process-color [m]
+  (if-let [c (:color m)]
+    (if (keyword? c)
+      (assoc m :color (Theme c (name c)))
+      m)
+    m))
+
 ;; ## Components
 
-(defcomponent Mafs
+(defn Mafs
   "
   - `:width`
   - `:height`
   - `:pan`
-  - `:viewbox`
+  - `:zoom`
+  - `:view-box`
+  - `:on-click`
   - `:preserve-aspect-ratio`
   - `:ssr`
   "
-  m/Mafs)
+  [& children]
+  (into [:> m/Mafs] children))
 
-(defcomponent Point
+(defn Point
   "
   - `:x`
   - `:y`
   - `:color`
   - `:opacity`
   - `:svg-circle-props`
-"
-  m/Point)
+  "
+  [opts]
+  [:> m/Point (process-color opts)])
 
-(defcomponent Polygon
+(defn Polygon
   "
   - `:points`
   - `:svg-polygon-props`
@@ -49,12 +61,27 @@
   - `:stroke-opacity`
   - `:stroke-style`
   "
-  m/Polygon)
+  [opts]
+  [:> m/Polygon (process-color opts)])
 
-(defcomponent Ellipse
+(defn Polyline
+  "
+  - `:points`
+  - `:svg-polyline-props`
+  - `:color`
+  - `:weight`
+  - `:fill-opacity`
+  - `:stroke-opacity`
+  - `:stroke-style`
+  "
+  [opts]
+  [:> m/Polyline (process-color opts)])
+
+(defn Ellipse
   "
   - `:center`
   - `:radius`
+  - `:angle`
   - `:svg-ellipse-props`
   - `:color`
   - `:weight`
@@ -62,7 +89,8 @@
   - `:stroke-opacity`
   - `:stroke-style`
   "
-  m/Ellipse)
+  [opts]
+  [:> m/Ellipse (process-color opts)])
 
 
 (defn Circle
@@ -80,7 +108,7 @@
   [Ellipse
    (assoc props :radius [radius radius])])
 
-(defcomponent Text
+(defn Text
   "
   - `:x`
   - `:y`
@@ -90,9 +118,12 @@
   - `:color`
   - `:svg-text-props`
   "
-  m/Text)
+  [& children]
+  (let [[opts children] (split-opts children)]
+    (into [:> m/Text (process-color opts)]
+          children)))
 
-(defcomponent Vector
+(defn Vector
   "
   - `:tail`
   - `:tip`
@@ -102,9 +133,10 @@
   - `:weight`
   - `:style`
   "
-  m/Vector)
+  [opts]
+  [:> m/Vector opts])
 
-(defcomponent Transform
+(defn Transform
   "
   - `:matrix`
   - `:translate`
@@ -112,7 +144,8 @@
   - `:rotate`
   - `:shear`
   "
-  m/Transform)
+  [& children]
+  (into [:> m/Transform] children))
 
 (defn ^:no-doc named-constraints
   [s initial]
@@ -186,7 +219,9 @@
     (fn [{!state :atom on-move :on-move}]
       (reagent/with-let [!state (or !state (reagent/atom initial))]
         [:> m/MovablePoint
-         (assoc opts
+         ;; TODO is this a problem, that the color can't come in? Can color not
+         ;; update?
+         (assoc (process-color opts)
                 :point (get !state)
                 :on-move
                 (fn [new-point]

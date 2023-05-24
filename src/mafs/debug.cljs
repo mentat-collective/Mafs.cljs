@@ -1,11 +1,12 @@
 (ns mafs.debug
-  (:require ["mafs" :as m]
-            [mafs.macros :refer [defcomponent]]))
+  (:require ["mafs" :as m]))
 
-(defcomponent TransformWidget
-  (.-TransformWidget m/Debug))
+(defn TransformWidget [& children]
+  (into [:> (.-TransformWidget m/Debug)]
+        children))
 
-(defcomponent ViewportInfo
+(defn ViewportInfo
   "
   - `:precision`"
-  (.-ViewportInfo m/Debug))
+  ([] [:> (.-ViewportInfo m/Debug)])
+  ([opts] [:> (.-ViewportInfo m/Debug) opts]))

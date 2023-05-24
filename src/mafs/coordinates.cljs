@@ -1,18 +1,19 @@
 (ns mafs.coordinates
-  (:require ["mafs" :as m]
-            [mafs.macros :refer [defcomponent]]))
+  (:require ["mafs" :as m]))
 
-(defcomponent Cartesian
+(defn Cartesian
   "
   - `:x-axis`
   - `:y-axis`
   - `:subdivisions`"
-  (.-Cartesian m/Coordinates))
+  ([] [:> (.-Cartesian m/Coordinates)])
+  ([opts] [:> (.-Cartesian m/Coordinates) opts]))
 
-(defcomponent Polar
+(defn Polar
   "
   - `:x-axis`
   - `:y-axis`
   - `:lines`
   - `:subdivisions`"
-  (.-Polar m/Coordinates))
+  ([] [:> (.-Polar m/Coordinates)])
+  ([opts] [:> (.-Polar m/Coordinates) opts]))

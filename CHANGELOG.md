@@ -2,6 +2,12 @@
 
 ## [unreleased]
 
+- :
+
+  - Upgrades Mafs to 0.16.0 (see the [Mafs CHANGELOG entry
+    here](https://github.com/stevenpetryk/mafs/blob/main/CHANGELOG.md#0160))
+
+
 ## [0.2.1]
 
 - #14:

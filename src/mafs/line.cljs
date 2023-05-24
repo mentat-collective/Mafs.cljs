@@ -1,8 +1,8 @@
 (ns mafs.line
   (:require ["mafs" :as m]
-            [mafs.macros :refer [defcomponent]]))
+            [mafs.core :as mafs]))
 
-(defcomponent Segment
+(defn Segment
   "
   - `:point1`
   - `:point2`
@@ -11,9 +11,12 @@
   - `:weight`
   - `:style`
   "
-  (.-Segment m/Line))
+  [opts]
+  [:>
+   (.-Segment m/Line)
+   (mafs/process-color opts)])
 
-(defcomponent ThroughPoints
+(defn ThroughPoints
   "
   - `:point1`
   - `:point2`
@@ -22,9 +25,12 @@
   - `:weight`
   - `:style`
   "
-  (.-ThroughPoints m/Line))
+  [opts]
+  [:>
+   (.-ThroughPoints m/Line)
+   (mafs/process-color opts)])
 
-(defcomponent PointSlope
+(defn PointSlope
   "
   - `:point`
   - `:slope`
@@ -33,9 +39,12 @@
   - `:weight`
   - `:style`
   "
-  (.-PointSlope m/Line))
+  [opts]
+  [:>
+   (.-PointSlope m/Line)
+   (mafs/process-color opts)])
 
-(defcomponent PointAngle
+(defn PointAngle
   "
   - `:point`
   - `:angle`
@@ -44,4 +53,7 @@
   - `:weight`
   - `:style`
   "
-  (.-PointAngle m/Line))
+  [opts]
+  [:>
+   (.-PointAngle m/Line)
+   (mafs/process-color opts)])
