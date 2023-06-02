@@ -134,7 +134,7 @@
   - `:style`
   "
   [opts]
-  [:> m/Vector opts])
+  [:> m/Vector (process-color opts)])
 
 (defn Transform
   "
@@ -157,9 +157,16 @@
       "Invalid constraint name: "
       {:constrain s}))))
 
+(defn ^:no-doc ->array-fn [f]
+  (fn [input]
+    (let [ret (f input)]
+      (if (vector? ret)
+        (apply array ret)
+        ret))))
+
 (defn ^:no-doc constrain->fn [constrain initial]
   (cond (nil? constrain) nil
-        (fn? constrain) (comp clj->js constrain)
+        (fn? constrain) (->array-fn constrain)
 
         (or (keyword? constrain)
             (string? constrain))

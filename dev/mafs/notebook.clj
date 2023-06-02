@@ -673,6 +673,38 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
   [mafs.plot/OfX {:y Math/sin :color :blue}]
   [mafs.plot/OfY {:x sigmoid1 :color :pink}]])
 
+;; #### Inequalities of $x$ and $y$
+
+;; Inequalities represent the region less than or greater than one or two
+;; functions. Mafs allows you to plot the region between two functions, or a
+;; function and a constant. The inequality can be a function of $x$ or $y$.
+
+;; You cannot provide an `:x` and a `:y` prop to `Inequality` - it will throw a
+;; runtime exception. Similarly, you cannot pass conflicting inequality
+;; operators — like both `"<"` and `"<="`.
+
+^{::clerk/width :wide}
+(show-sci
+ (reagent/with-let
+   [!point (reagent/atom [0 -1])]
+   [mafs/Mafs
+    [mafs.coordinates/Cartesian]
+    [mafs.plot/Inequality
+     {:x (let [[ax ay] @!point]
+           {:<= (fn [y]
+                  (- (Math/cos (+ y ay)) ax))
+            :>(fn [y]
+                (+ (Math/sin (- y ay)) ax))})
+      :color :blue}]
+    [mafs.plot/Inequality
+     {:y (let [[ax ay] @!point]
+           {:<= (fn [x]
+                  (- (Math/cos (+ x ax)) ay))
+            :>(fn [x]
+                (+ (Math/sin (- x ax)) ay))})
+      :color :pink}]
+    [mafs/MovablePoint {:atom !point}]]))
+
 ;; #### Parametric functions
 
 ^{::clerk/width :wide}

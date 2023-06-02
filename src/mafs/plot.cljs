@@ -77,12 +77,8 @@
   [opts]
   [:>
    (.-Parametric m/Plot)
-   (mafs/process-color opts)])
-
-(defn ^:no-doc ->array-fn [f]
-  (fn [input]
-    (let [ret (f (into [] input))]
-      (apply array ret))))
+   (-> (mafs/process-color opts)
+       (update :xy mafs/->array-fn))])
 
 (defn VectorField
   "
@@ -96,4 +92,4 @@
   [:>
    (.-VectorField m/Plot)
    (-> (mafs/process-color opts)
-       (update :xy ->array-fn))])
+       (update :xy mafs/->array-fn))])
