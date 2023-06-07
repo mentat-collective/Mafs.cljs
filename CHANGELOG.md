@@ -4,8 +4,8 @@
 
 - :
 
-  - Upgrades Mafs to 0.16.0 (see the [Mafs CHANGELOG entry
-    here](https://github.com/stevenpetryk/mafs/blob/main/CHANGELOG.md#0160))
+  - Upgrades Mafs to 0.17.0 (see the [Mafs CHANGELOG entry
+    here](https://github.com/stevenpetryk/mafs/blob/main/CHANGELOG.md#0170))
 
 
 ## [0.2.1]
