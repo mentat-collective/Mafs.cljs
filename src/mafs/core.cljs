@@ -5,19 +5,33 @@
 
 ;; ## Helpers
 
-(def labelPi m/labelPi)
+(def labelPi
+  "Labeling function that, suitable for use with the `:labels` options of various
+  components."
+  m/labelPi)
+
 (def useTransformContext m/useTransformContext)
 (def useStopwatch m/useStopwatch)
 
 (def Theme
+  "Map of keyword => CSS Mafs theming variable."
   (js->clj m/Theme :keywordize-keys true))
 
-(defn ^:no-doc split-opts [children]
+(defn ^:no-doc split-opts
+  "Given a sequence of component children that may or may not start with an
+  options map, returns a pair of
+
+  - `options` (or {} if none existed)
+  - `children`"
+  [children]
   (if (map? (first children))
     [(first children) (rest children)]
     [{} children]))
 
-(defn ^:no-doc process-color [m]
+(defn ^:no-doc process-color
+  "Given an options map `m`, attempts to replace the `:color` entry (if present)
+  with an entry from [[Theme]]. Returns the updated options."
+  [m]
   (if-let [c (:color m)]
     (if (keyword? c)
       (assoc m :color (Theme c (name c)))
@@ -27,123 +41,209 @@
 ;; ## Components
 
 (defn Mafs
-  "
-  - `:width`
-  - `:height`
-  - `:pan`
-  - `:zoom`
-  - `:view-box`
-  - `:on-click`
-  - `:preserve-aspect-ratio`
-  - `:ssr`
-  "
+  "Given an optional map of options and any number of children, renders a Mafs 2D
+  scene.
+
+  Supported options:
+
+  - `:width`: number (width in pixels) or \"auto\"
+
+  - `:height`: number (height in pixels)
+
+  - `:pan`: If true (default), enable panning with the mouse and keyboard.
+
+  - `:view-box`: If true, enable zooming with the mouse and keyboard.
+
+      can also be a map with keys `:min` (in range `(0, 1]`) and `:max` (in range
+      `[1, ∞)`).
+
+  - `:preserve-aspect-ratio`: boolean or \"contain\" (default). Whether to
+    squish the graph to fill the Mafs viewport or to preserve the aspect ratio of
+    the coordinate space.
+
+  - `:on-click`: `(fn [point, mouse-event] ...)`, called when the view is
+    clicked on, and passed the point where it was clicked."
   [& children]
   (into [:> m/Mafs] children))
 
 (defn Point
-  "
-  - `:x`
-  - `:y`
-  - `:color`
-  - `:opacity`
-  - `:svg-circle-props`
-  "
+  "Takes a map with `:x` and `:y` entries required and renders a dot onto a Mafs
+  scene at location $(x, y)$.
+
+  Supported options:
+
+  - `:x`: x-coordinate of the point.
+
+  - `:y`: y-coordinate of the point.
+
+  - `:color`: any valid [CSS
+     color](https://developer.mozilla.org/en-US/docs/Web/CSS/color), or any keyword
+     from [[mafs.core/Theme]].
+
+  - `:opacity`: Double in the range [0.0, 0.1] inclusive.
+
+  - `:svg-circle-props`: A map of property name => value of any property
+    accepted
+    by [SVGCircleElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGCircleElement)
+    or any parent."
   [opts]
   [:> m/Point (process-color opts)])
 
 (defn Polygon
-  "
-  - `:points`
-  - `:svg-polygon-props`
-  - `:color`
-  - `:weight`
-  - `:fill-opacity`
-  - `:stroke-opacity`
-  - `:stroke-style`
-  "
+  "Takes a map with `:point` entry required and renders a polygon onto a Mafs
+  scene bounded by the specified points.
+
+  Supported options:
+
+  - `:points`: a sequence of `[<x> <y>]` coordinates.
+
+  - `:color`: any valid [CSS
+     color](https://developer.mozilla.org/en-US/docs/Web/CSS/color), or any keyword
+     from [[emmy.mafs.core/colors]].
+
+  - `:weight`: Double in the range [0.0, 0.1] inclusive specifying the weight of
+      the polygon's boundary line.
+
+  - `:fill-opacity`: Double in the range [0.0, 0.1] inclusive specifying the
+      opacity of the interior of the polygon.
+
+  - `:stroke-opacity`: Double in the range [0.0, 0.1] inclusive specifying the
+      opacity of the boundary of the polygon.
+
+  - `:stroke-style`: \"solid\" or \"dashed\". Defaults to \"solid\".
+
+  - `:svg-polygon-props`: A map of property name => value of any property
+    accepted
+    by [SVGPolygonElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPolygonElement)
+    or any parent."
   [opts]
   [:> m/Polygon (process-color opts)])
 
 (defn Polyline
-  "
-  - `:points`
-  - `:svg-polyline-props`
-  - `:color`
-  - `:weight`
-  - `:fill-opacity`
-  - `:stroke-opacity`
-  - `:stroke-style`
-  "
+  "Similar to [[polygon]], except the first and last points are not connected.
+
+  See [[polygon]] for supported inputs."
   [opts]
   [:> m/Polyline (process-color opts)])
 
 (defn Ellipse
-  "
-  - `:center`
-  - `:radius`
-  - `:angle`
-  - `:svg-ellipse-props`
-  - `:color`
-  - `:weight`
-  - `:fill-opacity`
-  - `:stroke-opacity`
-  - `:stroke-style`
-  "
+  "Takes a map with `:center` and `:radius` entries required and renders the
+  specified ellipse onto a Mafs scene.
+
+  Supported options:
+
+  - `:center`: a 2-vector specifying the `[<x> <y>]` coordinate of the center.
+
+  - `:radius`: a 2-vector specifying `[<width-radius> <height-radius>]`
+
+  - `:angle`: a counter-clockwise angle in radians to rotate the ellipse.
+
+  - `:color`: any valid [CSS
+     color](https://developer.mozilla.org/en-US/docs/Web/CSS/color), or any keyword
+     from [[mafs.core/colors]].
+
+  - `:weight`: Double in the range [0.0, 0.1] inclusive specifying the weight of
+      the ellipse's boundary line.
+
+  - `:fill-opacity`: Double in the range [0.0, 0.1] inclusive specifying the
+      opacity of the interior of the ellipse.
+
+  - `:stroke-opacity`: Double in the range [0.0, 0.1] inclusive specifying the
+      opacity of the boundary of the ellipse.
+
+  - `:stroke-style`: \"solid\" or \"dashed\". Defaults to \"solid\".
+
+  - `:svg-ellipse-props`: A map of property name => value of any property
+    accepted
+    by [SVGEllipseElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGEllipseElement)
+    or any parent."
   [opts]
   [:> m/Ellipse (process-color opts)])
 
 
 (defn Circle
-  "
-  - `:center`
-  - `:radius`
-  - `:svg-ellipse-props`
-  - `:color`
-  - `:weight`
-  - `:fill-opacity`
-  - `:stroke-opacity`
-  - `:stroke-style`
-  "
+  "Similar to [[ellipse]] but takes a single number for `:radius`.
+
+  See [[ellipse]] for a description of all other supported options."
   [{:keys [radius] :as props}]
   [Ellipse
    (assoc props :radius [radius radius])])
 
 (defn Text
-  "
-  - `:x`
-  - `:y`
-  - `:attach`
-  - `:attach-distance`
-  - `:size`
-  - `:color`
-  - `:svg-text-props`
-  "
+  "Takes an options map with `:x` and `:y` required and any number of string
+  children and renders the concatenated string children onto a Mafs scene.
+
+  Supported options:
+
+  - `:x`: The x-coordinate of the element the text should attach to.
+
+  - `:y`: The y-coordinate of the element the text should attach to.
+
+  - `:attach`: The cardinal direction that `s` should be offset from its
+      element. One of \"n\" | \"ne\" | \"e\" | \"se\" | \"s\" | \"sw\" | \"w\" |
+      \"nw\".
+
+  - `:attach-distance`: The distance away from the attaching element.
+
+  - `:color`: any valid [CSS
+     color](https://developer.mozilla.org/en-US/docs/Web/CSS/color), or any keyword
+     from [[emmy.mafs.core/colors]].
+
+  - `:weight`: Double in the range [0.0, 0.1] inclusive specifying the weight of
+      the polygon's boundary line.
+
+  - `:size`: font size.
+
+  - `:svg-text-props`: A map of property name => value of any property accepted
+      by [SVGTextElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGTextElement)
+      or any parent."
   [& children]
   (let [[opts children] (split-opts children)]
     (into [:> m/Text (process-color opts)]
           children)))
 
 (defn Vector
-  "
-  - `:tail`
-  - `:tip`
-  - `:svg-line-props`
-  - `:color`
-  - `:opacity`
-  - `:weight`
-  - `:style`
-  "
+  "Takes a map with `:tip` entry required and renders a vector onto a Mafs scene.
+
+  Supported options:
+
+  - `:tail`: 2-vector `[<x> <y>]` specifying the coordinates of the vector tip.
+
+  - `:tip`: 2-vector `[<x> <y>]` specifying the coordinates of the vector tip.
+
+  - `:color`: any valid [CSS
+     color](https://developer.mozilla.org/en-US/docs/Web/CSS/color), or any keyword
+     from [[emmy.mafs.core/colors]].
+
+  - `:opacity`: Double in the range [0.0, 0.1] inclusive.
+
+  - `:weight`: Double in the range [0.0, 0.1] inclusive specifying the weight of
+      the polygon's boundary line.
+
+  - `:style`: \"solid\" or \"dashed\". Defaults to \"solid\".
+
+  - `:svg-line-props`: A map of property name => value of any property accepted
+      by [SVGLineElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGLineElement)
+      or any parent."
   [opts]
   [:> m/Vector (process-color opts)])
 
 (defn Transform
-  "
-  - `:matrix`
-  - `:translate`
-  - `:scale`
-  - `:rotate`
-  - `:shear`
-  "
+  "Takes an options map and any number of children and transforms the children as
+  specified by the options.
+
+  Supported options:
+
+  - `:matrix`: Matrix object generated by the code in [[mafs.matrix]].
+
+  - `:translate`: 2-vector of the form `[<x-translation> <y-translation>]`.
+
+  - `:scale`: either a number (scale factor) or a 2-vector of the form
+    `[<x-scale> <y-scale>]`.
+
+  - `:rotate`: number of radians to rotate the children.
+
+  - `:translate`: 2-vector of the form `[<x-shear> <y-shear>]`."
   [& children]
   (into [:> m/Transform] children))
 
