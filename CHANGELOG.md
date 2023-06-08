@@ -2,6 +2,32 @@
 
 ## [unreleased]
 
+## [0.3.0]
+
+- #17:
+
+  - Upgrades Mafs to 0.17.0 (see the [Mafs CHANGELOG entry
+    here](https://github.com/stevenpetryk/mafs/blob/main/CHANGELOG.md#0170))
+
+  - Adds `mafs.core/Polyline` and `mafs.plot/Inequality`.
+
+  - `mafs.core/Mafs` now supports an `:on-click` handler.
+
+  - `mafs.vector` and `mafs.matrix` are now `cljc` files, so that projects like
+    [Emmy-Viewers](https://github.com/mentat-collective/emmy-viewers) can
+    construct Mafs-style vectors and matrices on the JVM.
+
+  - Removes the former `defcomponent` macro in favor of explicit `defn`s. This
+    makes the project compatible with [Portal](https://github.com/djblue/portal)
+    and other libraries that need to load cljs files via
+    [SCI](https://github.com/babashka/sci).
+
+  - Upgrades our `reagent` dependency to 1.2.0, and upgrades Clerk for the docs
+    site build to the latest `main`.
+
+  - All components are now well-documented!
+
+
 ## [0.2.1]
 
 - #14:

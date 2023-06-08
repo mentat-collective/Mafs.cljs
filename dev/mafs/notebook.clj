@@ -1,8 +1,7 @@
-^#:nextjournal.clerk
-{:toc true
- :no-cache true
- :visibility :hide-ns}
+^{:nextjournal.clerk/visibility {:code :hide}}
 (ns mafs.notebook
+  #:nextjournal.clerk
+  {:toc true :no-cache true}
   (:require [mentat.clerk-utils.docs :as docs]
             [mentat.clerk-utils.show :refer [show-sci]]
             [nextjournal.clerk :as clerk]))
@@ -10,8 +9,8 @@
 ^{::clerk/visibility {:code :hide :result :hide}}
 (clerk/eval-cljs
  ;; These aliases only apply inside this namespace.
- '(require '[mafs.core :as mafs])
- '(require '[reagent.core :as reagent]))
+ '(do (require '[mafs.core :as mafs])
+      (require '[reagent.core :as reagent])))
 
 ;; # Mafs.cljs
 ;;
@@ -58,9 +57,8 @@
       :xy
       (let [[ax ay] @!point]
         (fn [[x y]]
-          (js/Array.
-           (- (- y ay) (- x ax))
-           (- (- (- x ax)) (- y ay)))))
+          [(- (- y ay) (- x ax))
+           (- (- (- x ax)) (- y ay))]))
       :xy-opacity
       (fn [[x y]]
         (/ (+ (Math/abs x) (Math/abs y))
@@ -108,9 +106,9 @@
 
 ;; ```clj
 ;; (mentat.clerk-utils.css/set-css!
-;;  "https://unpkg.com/mafs@0.15.2/core.css"
+;;  "https://unpkg.com/mafs@0.17.0/core.css"
 ;;  "https://unpkg.com/computer-modern@0.1.2/cmu-serif.css"
-;;  "https://unpkg.com/mafs@0.15.2/font.css")
+;;  "https://unpkg.com/mafs@0.17.0/font.css")
 ;; ```
 ;;
 ;; Otherwise find some way to load these CSS files in your project's header.
@@ -569,8 +567,25 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
       :stroke-style "dashed"}]
     [mafs/Polygon
      {:points [@!c a b]
-      :color (:blue mafs/Theme)}]
+      :color :blue}]
     [mafs/MovablePoint {:atom !c}]]))
+
+;; A Polyline is a polygon that doesn't connect its first and last points.
+
+^{::clerk/width :wide}
+(show-sci
+ (reagent/with-let
+   [a   [-2 -2]
+    !bc (reagent/atom {:b [-1 1] :c [1 -1]})
+    d   [2 2]]
+   [mafs/Mafs
+    [mafs.coordinates/Cartesian]
+    [mafs/Polyline
+     (let [{:keys [b c]} @!bc]
+       {:points [a b c d]
+        :color :blue})]
+    [mafs/MovablePoint {:atom !bc :path :b}]
+    [mafs/MovablePoint {:atom !bc :path :c}]]))
 
 ;; ### Circle
 
@@ -632,14 +647,14 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
                           :constrain "vertical"}]]
      [mafs/MovablePoint {:atom !state
                          :path :rotate
-                         :color (:blue mafs/Theme)
+                         :color :blue
                          ;; Constrain this point to only move in a circle
                          :constrain
                          (fn [p]
                            (mafs.vec/with-mag p 3))}]]
     [mafs/MovablePoint {:atom !state
                         :path :translate
-                        :color (:orange mafs/Theme)}]]))
+                        :color :orange}]]))
 
 ;; ### Plot
 
@@ -655,8 +670,40 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
 
  [mafs/Mafs
   [mafs.coordinates/Cartesian]
-  [mafs.plot/OfX {:y Math/sin :color (:blue mafs/Theme)}]
-  [mafs.plot/OfY {:x sigmoid1 :color (:pink mafs/Theme)}]])
+  [mafs.plot/OfX {:y Math/sin :color :blue}]
+  [mafs.plot/OfY {:x sigmoid1 :color :pink}]])
+
+;; #### Inequalities of $x$ and $y$
+
+;; Inequalities represent the region less than or greater than one or two
+;; functions. Mafs allows you to plot the region between two functions, or a
+;; function and a constant. The inequality can be a function of $x$ or $y$.
+
+;; You cannot provide an `:x` and a `:y` prop to `Inequality` - it will throw a
+;; runtime exception. Similarly, you cannot pass conflicting inequality
+;; operators — like both `"<"` and `"<="`.
+
+^{::clerk/width :wide}
+(show-sci
+ (reagent/with-let
+   [!point (reagent/atom [0 -1])]
+   [mafs/Mafs
+    [mafs.coordinates/Cartesian]
+    [mafs.plot/Inequality
+     {:x (let [[ax ay] @!point]
+           {:<= (fn [y]
+                  (- (Math/cos (+ y ay)) ax))
+            :>(fn [y]
+                (+ (Math/sin (- y ay)) ax))})
+      :color :blue}]
+    [mafs.plot/Inequality
+     {:y (let [[ax ay] @!point]
+           {:<= (fn [x]
+                  (- (Math/cos (+ x ax)) ay))
+            :>(fn [x]
+                (+ (Math/sin (- x ax)) ay))})
+      :color :pink}]
+    [mafs/MovablePoint {:atom !point}]]))
 
 ;; #### Parametric functions
 
@@ -701,9 +748,8 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
       :xy
       (let [[ax ay] @!point]
         (fn [[x y]]
-          (js/Array.
-           (- (- y ay) (- x ax))
-           (- (- (- x ax)) (- y ay)))))
+          [(- (- y ay) (- x ax))
+           (- (- (- x ax)) (- y ay))]))
       :xy-opacity
       (fn [[x y]]
         (/ (+ (Math/abs x) (Math/abs y))
@@ -825,10 +871,10 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
        [HelloBox]]
       [mafs/MovablePoint {:atom !state
                           :path :scale
-                          :color (:blue mafs/Theme)}]]
+                          :color :blue}]]
      [mafs/MovablePoint {:atom !state
                          :path :rotate
-                         :color (:green mafs/Theme)
+                         :color :green
                          :constrain mafs.vec/normalize}]]
     [mafs/MovablePoint {:atom !state
                         :path :translate}]]))
@@ -958,12 +1004,10 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
 
 ;; Beyond constraining horizontally or vertically, points can also be
 ;; constrained to arbitrary paths. This is done by passing a function to
-;; `:constrain`. The function is expected to take a point `[x y], which is where
-;; the user is trying to move to, and to return a new point, `[x' y']`, which is
-;; where the point should _actually_ go.
+;; `:constrain`. The function is expected to take a point `[x y]`, which is
+;; where the user is trying to move to, and to return a new point, `[x' y']`,
+;; which is where the point should _actually_ go.
 ;;
-;; > Note that for now you'll need to return a `js/Array` instead of a vector.
-
 ;; To demonstrate this, imagine constraining a point to "snap" to the nearest
 ;; whole number point. We take where the user is trying to move to, and round it
 ;; to the nearest whole number.
@@ -971,9 +1015,8 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
 ;; ```clj
 ;; [mafs/MovablePoint
 ;;  {:constrain (fn [[x y]]
-;;                (js/Array.
-;;                 (Math/round x)
-;;                 (Math/round y)))}]
+;;                [(Math/round x)
+;;                 (Math/round y)])}]
 ;; ```
 
 ;; Another common use case is to constrain motion to be circular —
@@ -982,8 +1025,7 @@ clojure -Sdeps '{:deps {io.github.mentat-collective/mafs.cljs {:git/sha \"%s\"}}
 ;; ```clj
 ;; [mafs/MovablePoint
 ;;  {:constrain (fn [point]
-;;                (clj->js
-;;                 (mafs.vec/with-mag point 1)))}]
+;;                (mafs.vec/with-mag point 1))}]
 ;; ```
 
 ;; You can also constrain a point to follow a straight line by setting constrain
