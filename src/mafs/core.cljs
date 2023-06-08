@@ -99,7 +99,7 @@
 
   - `:color`: any valid [CSS
      color](https://developer.mozilla.org/en-US/docs/Web/CSS/color), or any keyword
-     from [[emmy.mafs.core/colors]].
+     from [[mafs.core/Theme]].
 
   - `:weight`: Double in the range [0.0, 0.1] inclusive specifying the weight of
       the polygon's boundary line.
@@ -187,7 +187,7 @@
 
   - `:color`: any valid [CSS
      color](https://developer.mozilla.org/en-US/docs/Web/CSS/color), or any keyword
-     from [[emmy.mafs.core/colors]].
+     from [[mafs.core/Theme]].
 
   - `:weight`: Double in the range [0.0, 0.1] inclusive specifying the weight of
       the polygon's boundary line.
@@ -213,7 +213,7 @@
 
   - `:color`: any valid [CSS
      color](https://developer.mozilla.org/en-US/docs/Web/CSS/color), or any keyword
-     from [[emmy.mafs.core/colors]].
+     from [[mafs.core/Theme]].
 
   - `:opacity`: Double in the range [0.0, 0.1] inclusive.
 
@@ -288,16 +288,56 @@
         :else          #(swap! %1 assoc path %2)))
 
 (defn MovablePoint
-  "This version takes an atom and, optionally, a path into the atom.
-  - `:atom`
-  - `:path` optional
-  - `:constrain`
-  - `:color`
+  "Takes an options map and renders a movable point onto a Mafs scene.
 
-  also discuss
+  Movable points can be dragged around the coordinate plane, or moved via the
+  keyboard. These points can also synchronize their current position into an
+  atom specified by the user, optionally at some nested path.
 
-  - `:point`
-  - `:on-move`"
+  Control the point by either specifying
+
+  - `:atom` (and `:path`, optionally)
+  - `:point` and `:on-move`.
+
+  Supported options:
+
+  - `:atom`: atom into which the movable point should synchronize its current
+    coordinates `[<x> <y>]`. By default, `reset!`s the atom. Use `:path` to
+    synchronize with some internal path.
+
+  - `:path`: the (optional) path into the atom. For example, any of these forms
+    are valid:
+
+  ```clojure
+  (reagent.core/with-let [!xy (reagent.core/atom [0 0])]
+    (movable-point {:atom !xy}))
+
+  (reagent.core/with-let [!state (reagent.core/atom {:coords [0 0]})]
+    (movable-point {:atom !state :path :coords}))
+
+  (reagent.core/with-let
+    [!state (reagent.core/atom {:nested {:coords [0 0]}})]
+    (movable-point {:atom !state :path [:nested :coords]}))
+  ```
+
+  - `:point`: the controlled coordinates `[<x> <y>]` of the point.
+
+  - `:on-move`: called on each update with the new coordinates of the point.
+
+  - `:color`: any valid [CSS
+     color](https://developer.mozilla.org/en-US/docs/Web/CSS/color), or any keyword
+     from [[mafs.core/Theme]].
+
+  - `:constrain`: Either \"horizontal\" | \"vertical\" | <constraint function>
+
+    If you supply a function, it will be called on each point update with the
+    proposed position; return a new 2-vector with the constrained position.
+
+    For example, the following will constrain the point to a sine curve:
+
+  ```clojure
+  (movable-point {:constrain (fn [[x _]] [x (Math/sin x)])})
+  ```"
   [{!state :atom :keys [point path constrain on-move] :as opts}]
   (when (and !state point)
     (js/console.warn
