@@ -7,7 +7,7 @@
    :extra-deps
    {org.clojure/clojure       {:mvn/version "1.11.1"}
     org.clojure/clojurescript {:mvn/version "1.11.60"}
-    org.mentat/clerk-utils    {:mvn/version "0.5.1"}
+    org.mentat/clerk-utils    {:mvn/version "0.6.0"}
 
     io.github.nextjournal/clerk
     {:git/sha "1f6c5331418aaf9c5a4335fc2e6e95f07dc3af6b"}
