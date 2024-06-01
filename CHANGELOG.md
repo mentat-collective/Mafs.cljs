@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## [0.3.1]
+
   - #19 upgrades Mafs to 0.18.8 (see the [Mafs CHANGELOG entry
     here](https://github.com/stevenpetryk/mafs/blob/main/CHANGELOG.md#0188)).
 
